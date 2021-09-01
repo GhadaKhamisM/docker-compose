@@ -7,18 +7,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: digitalocean.com/php
     container_name: app
     restart: unless-stopped
-    tty: true
-    environment:
-      SERVICE_NAME: app
-      SERVICE_TAGS: dev
+
     working_dir: /var/www/html
     volumes:
        - ./:/var/www/html
        - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
-
+    depends_on:
+      - mysql
     networks:
       - laravel
  #Nginx Service
@@ -26,7 +23,6 @@ services:
     image: nginx:alpine
     container_name: webserver
     restart: unless-stopped
-    tty: true
     ports:
       - "80:80"
       - "443:443"
@@ -41,7 +37,6 @@ services:
     image: mysql:5.7.22
     container_name: mysql
     restart: unless-stopped
-    tty: true
     ports:
       - "3306:3306"
     environment:
