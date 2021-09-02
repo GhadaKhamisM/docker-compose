@@ -35,4 +35,15 @@ class UserService
     public function validateCorrectPassword(string $password,User $user){
         return Hash::check($password,$user->password);
     }
+
+    /**
+     * create new user
+     * 
+     * @param $userData
+     * @return User
+     */
+    public function createUser(Array $userData){
+        $userData['password'] = Hash::make($userData['password']);
+        return User::create($userData);
+    }
 }

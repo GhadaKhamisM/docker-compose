@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Http\Services\UserService;
 
 class AuthController extends Controller
@@ -26,8 +27,11 @@ class AuthController extends Controller
     }
 
 
-    public function registration(){
-
+    public function registration(RegisterRequest $request){
+        $userData = array_merge($request->validated(),array('role_id' => config('roles.NORMAL_USER')));
+        $user = $this->userService->createUser($userData);
+        $token = JWTAuth::fromUser($user);
+        return response()->json(['results' => array('token' => $token), 'messages' => 'Your account successfully'] , 200);
     }
 
 }
