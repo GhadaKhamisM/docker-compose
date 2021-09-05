@@ -18,7 +18,6 @@ class RoleSeeder extends Seeder
         );
         foreach ($rolesData as $key => $roleData) {
             $roleId = $roleData['id'];
-            unset($roleData['id']);
             $role = Role::updateOrCreate(['id' => $roleId], $roleData);
         }
     }
