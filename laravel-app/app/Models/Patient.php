@@ -7,8 +7,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Hash;
 
-class User extends Authenticatable implements JWTSubject
+class Patient extends Authenticatable implements JWTSubject
 {
     use Notifiable;
     use SoftDeletes;
@@ -18,7 +19,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'role_id', 'email', 'password',
+        'name', 'mobile', 'password',
     ];
 
     /**
@@ -27,16 +28,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
+        'password',
     ];
 
     /**
@@ -59,8 +51,8 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function role()
+    public function setPasswordAttribute($value)
     {
-        return $this->belongsTo(Role::class);
+        $this->attributes['password'] = Hash::make($value);
     }
 }
