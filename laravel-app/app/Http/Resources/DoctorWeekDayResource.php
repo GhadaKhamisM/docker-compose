@@ -18,6 +18,8 @@ class DoctorWeekDayResource extends JsonResource
             'id' => $this->id,
             'start_hour' => $this->start_hour,
             'to_hour' => $this->to_hour,
+            'name_arabic' => $this->weekDay->name_arabic,
+            'name_english' => $this->weekDay->name_english,
         );
     }
 }

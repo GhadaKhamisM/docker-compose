@@ -42,11 +42,11 @@ class DoctorRepository
 
     public function attachDoctorData(Doctor $doctor,Array $data){
         $doctor->services()->attach($data['services']);
-        $doctor->weekDays()->attach($data['doctor_week_days']);
+        $doctor->doctorWeekDays()->createMany($data['doctor_week_days']);
     }
 
     public function detachDoctorData(Doctor $doctor){
         $doctor->services()->detach();
-        $doctor->weekDays()->detach();
+        $doctor->doctorWeekDays()->delete();
     }
 }

@@ -13,7 +13,7 @@ class CreateDoctorWeekDayTable extends Migration
      */
     public function up()
     {
-        Schema::create('doctor_week_day', function (Blueprint $table) {
+        Schema::create('doctor_week_days', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('doctor_id')->unsigned()->index();
             $table->foreign('doctor_id')->references('id')->on('doctors');
@@ -33,6 +33,6 @@ class CreateDoctorWeekDayTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('doctor_week_day');
+        Schema::dropIfExists('doctor_week_days');
     }
 }

@@ -54,8 +54,8 @@ class Doctor extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Service::class);
     }
 
-    public function weekDays(){
-        return $this->belongsToMany(WeekDay::class);
+    public function doctorWeekDays(){
+        return $this->hasMany(DoctorWeekDay::class);
     }
 
     protected static function boot()
@@ -63,11 +63,11 @@ class Doctor extends Authenticatable implements JWTSubject
         parent::boot();
         static::updating(function ($model) {
             $model->services()->detach();
-            $model->weekDays()->detach();
+            $model->doctorWeekDays()->delete();
         });
         static::deleted(function ($model) {
             $model->services()->detach();
-            $model->weekDays()->detach();
+            $model->doctorWeekDays()->delete();
         });
     }
 }

@@ -12,4 +12,14 @@ class DoctorWeekDay extends Model
     protected $fillable = [
         'doctor_id', 'week_day_id', 'start_hour', 'to_hour',
     ];
+
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class);
+    }
+
+    public function weekDay()
+    {
+        return $this->belongsTo(WeekDay::class);
+    }
 }
