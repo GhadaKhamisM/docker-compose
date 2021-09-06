@@ -13,7 +13,7 @@ class AdminSeeder extends Seeder
     public function run()
     {
         $adminsData = array(
-            array('id' => 1, 'name' => 'Super admin', 'username' => 'user@admin.com', 'password' => Hash::make('123456')),
+            array('id' => 1, 'name' => 'Super admin', 'username' => config('admin.SUPPER_ADMIN_USERNAME'), 'password' => Hash::make(config('admin.SUPPER_ADMIN_PASSWORD'))),
         );
         foreach ($adminsData as $key => $adminData) {
             $adminId = $adminData['id'];
