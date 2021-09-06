@@ -17,7 +17,7 @@ class ChangeDefaultGuard
     public function handle($request, Closure $next,$gruard = 'admin')
     { 
         config()->set('auth.defaults.guard', $gruard );
-        config()->set('auth.defaultspasswords',$gruard.'s');
+        config()->set('auth.defaults.passwords',$gruard.'s');
 
         return $next($request);
     }
