@@ -10,17 +10,15 @@ use App\Models\Doctor;
 use App\Http\Resources\DoctorResource;
 use App\Http\Filters\DoctorFilter;
 use Illuminate\Http\Response;
-use App\Http\Services\EmailService;
-use App\Mail\NewDoctorNotification;
+use App\Jobs\SendEmailJob;
 
 class DoctorController extends Controller
 {
-    private $doctorService,$emailService;
+    private $doctorService;
 
-    public function __construct(DoctorService $doctorService, EmailService $emailService)
+    public function __construct(DoctorService $doctorService)
     {
         $this->doctorService = $doctorService;
-        $this->emailService = $emailService;
     }
 
     public function index(DoctorFilter $filter){
@@ -34,7 +32,7 @@ class DoctorController extends Controller
 
     public function store(StoreDoctorRequest $request){
         $doctor = $this->doctorService->create($request->validated());
-        $this->emailService->sendEmail(new NewDoctorNotification($doctor,$request->password),$doctor->email);
+        dispatch(new SendEmailJob($doctor,$request->password));
         return new DoctorResource($doctor);
     }
 
