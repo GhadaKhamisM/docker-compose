@@ -20,6 +20,6 @@ class CheckAuth
         if($gruard && Auth::guard($gruard)->check()){
             return $next($request);
         }
-        return response()->json(['messages' => 'Not authorized'] ,Response::HTTP_FORBIDDEN);
+        abort(Response::HTTP_FORBIDDEN,'Not authorized');
     }
 }

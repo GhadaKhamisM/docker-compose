@@ -40,6 +40,9 @@ class ServiceController extends Controller
     }
 
     public function destroy(Service $service){
+        if($service->doctors()->count()){
+            abort(Response::HTTP_CONFLICT,'Can\'t delete this service, there are doctors related with it');
+        }
         $this->serviceService->delete($service);
         return response()->json(['results' => null, 'messages' => 'Service deleted successfully'] , Response::HTTP_OK);
     }
