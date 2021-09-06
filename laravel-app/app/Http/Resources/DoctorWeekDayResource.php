@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ServiceResource extends JsonResource
+class DoctorWeekDayResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,11 +16,10 @@ class ServiceResource extends JsonResource
     {
         return array(
             'id' => $this->id,
-            'name_arabic' => $this->name_arabic,
-            'name_english' => $this->name_english,
-            'description' => $this->description,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'start_hour' => $this->start_hour,
+            'to_hour' => $this->to_hour,
+            'name_arabic' => $this->weekDay->name_arabic,
+            'name_english' => $this->weekDay->name_english,
         );
     }
 }

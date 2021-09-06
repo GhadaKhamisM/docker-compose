@@ -6,20 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Http\Filters\Filterable;
 
-class Service extends Model
+class WeekDay extends Model
 {
     use SoftDeletes;
-    use Filterable;
 
     protected $fillable = [
-        'name_arabic', 'name_english', 'description',
+        'name_arabic', 'name_english',
     ];
 
-    protected $hidden = [
-    ];
-
-    public function doctors()
-    {
+    public function doctors(){
         return $this->belongsToMany(Doctor::class);
     }
 }

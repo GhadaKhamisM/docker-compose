@@ -44,7 +44,6 @@ return [
         'patients' => [
             'driver' => 'jwt',
             'provider' => 'patients',
-            'hash' => false,
         ],
         'admin' => [
             'driver' => 'jwt',
@@ -54,7 +53,6 @@ return [
         'doctor' => [
             'driver' => 'jwt',
             'provider' => 'doctors',
-            'hash' => false,
         ],
     ],
 
