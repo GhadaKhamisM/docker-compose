@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::name('auth.')->prefix('v1')->group(function () {
-        Route::post('patients/register', 'Auth\RegisterController@patientRegistration')->name('patient-register');
-        Route::post('patients/login','Auth\LoginController@patientLogin')->name('patient-login');     
-        Route::post('admins/login','Auth\LoginController@adminLogin')->name('admin-login');   
+        Route::post('patients/register', 'Auth\RegisterController@patientRegistration')->middleware(['jwt.guard:patient'])->name('patient-register');
+        Route::post('patients/login','Auth\LoginController@patientLogin')->middleware(['jwt.guard:patient'])->name('patient-login');     
+        Route::post('admins/login','Auth\LoginController@adminLogin')->middleware(['jwt.guard:admin'])->name('admin-login');   
 });
