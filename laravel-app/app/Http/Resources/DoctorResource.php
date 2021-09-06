@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ServiceResource extends JsonResource
+class DoctorResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,9 +18,12 @@ class ServiceResource extends JsonResource
             'id' => $this->id,
             'name_arabic' => $this->name_arabic,
             'name_english' => $this->name_english,
-            'description' => $this->description,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'mobile' => $this->mobile,
+            'time_slot' => $this->time_slot,
+            'photo' => $this->photo,
+            'email' => $this->email,
+            'services' => ServiceResource::collection($this->services),
+            'week_days' => WeekDayResource::collection($this->weekDays),
         );
     }
 }
