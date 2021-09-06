@@ -41,7 +41,7 @@ return [
             'provider' => 'admins',
         ],
 
-        'patients' => [
+        'patient' => [
             'driver' => 'jwt',
             'provider' => 'patients',
         ],
