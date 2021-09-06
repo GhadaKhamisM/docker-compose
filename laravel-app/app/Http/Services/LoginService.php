@@ -44,7 +44,7 @@ class LoginService
             $token = JWTAuth::fromUser($admin);
             return response()->json(['results' => array('token' => $token), 'messages' => 'Token generated successfully'] , Response::HTTP_OK);
         }
-        return response()->json(['results' => null, 'messages' => 'Wrong email or password'] ,Response::HTTP_UNAUTHORIZED);
+        abort(Response::HTTP_UNAUTHORIZED,'Wrong email or password');
     }
 
     /**
@@ -59,6 +59,6 @@ class LoginService
             $token = JWTAuth::fromUser($patient);
             return response()->json(['results' => array('token' => $token), 'messages' => 'Token generated successfully'] , Response::HTTP_OK);
         }
-        return response()->json(['results' => null, 'messages' => 'Wrong email or password'] ,Response::HTTP_UNAUTHORIZED);
+        abort(Response::HTTP_UNAUTHORIZED,'Wrong email or password');
     }
 }
