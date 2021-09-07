@@ -30,7 +30,7 @@ class DoctorService
     public function update(Doctor $doctor,array $data){
         $data['photo'] = $this->uploadFile($data['photo'],'/doctors');
         $this->doctorRepository->update($doctor,$data);
-        return $this->doctorRepository->getDoctor('id',$doctor->id);
+        return $this->doctorRepository->findBy('id',$doctor->id);
     }
 
     public function delete(Doctor $doctor){

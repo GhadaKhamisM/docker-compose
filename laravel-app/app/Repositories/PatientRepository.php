@@ -4,19 +4,15 @@ namespace App\Repositories;
 
 use App\Models\Patient;
 
-class PatientRepository
+class PatientRepository extends BaseRepository
 {
 
     public function __construct()
     {
-    }
-
-    public function getPatient(string $filter, string $value)
-    {
-        return Patient::where($filter,$value)->first();
+        parent::__construct(Patient::class);
     }
 
     public function create(Array $patientData){
-        return Patient::create($patientData);
+        return $this->model->create($patientData);
     }
 }

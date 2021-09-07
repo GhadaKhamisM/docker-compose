@@ -37,7 +37,7 @@ class LoginService
      * @return token
      */
     public function adminLogin(array $requestData){
-        $admin = $this->adminRepository->getAdmin('username',$requestData['username']);
+        $admin = $this->adminRepository->findBy('username',$requestData['username']);
         if($admin && $this->validateCorrectPassword($requestData['password'],$admin->password)){
             $token = JWTAuth::fromUser($admin);
             return response()->json(['results' => array('token' => $token), 'messages' => 'Token generated successfully'] , Response::HTTP_OK);
@@ -52,7 +52,7 @@ class LoginService
      * @return token
      */
     public function patientLogin(array $requestData){
-        $patient = $this->patientRepository->getPatient('mobile',$requestData['mobile']);
+        $patient = $this->patientRepository->findBy('mobile',$requestData['mobile']);
         if($patient && $this->validateCorrectPassword($requestData['password'],$patient->password)){
             $token = JWTAuth::fromUser($patient);
             return response()->json(['results' => array('token' => $token), 'messages' => 'Token generated successfully'] , Response::HTTP_OK);

@@ -11,7 +11,7 @@ class ServiceFilter extends QueryFilter
      */
     public function name(string $name)
     {
-        $this->builder->whereRaw('name_arabic like ? OR name_english like ?', array('%'.$name.'%','%'.$name.'%'));
+        $this->builder->whereRaw('(name_arabic like ? OR name_english like ?)', array('%'.$name.'%','%'.$name.'%'));
     }
 
     /**
