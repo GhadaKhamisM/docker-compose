@@ -7,6 +7,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Response;
 use App\Repositories\PatientRepository;
 use App\Repositories\AdminRepository;
+use Lang;
 
 class LoginService
 {
@@ -40,9 +41,9 @@ class LoginService
         $admin = $this->adminRepository->findBy('username',$requestData['username']);
         if($admin && $this->validateCorrectPassword($requestData['password'],$admin->password)){
             $token = JWTAuth::fromUser($admin);
-            return response()->json(['results' => array('token' => $token), 'messages' => 'Token generated successfully'] , Response::HTTP_OK);
+            return response()->json(['token' => $token] , Response::HTTP_OK);
         }
-        abort(Response::HTTP_UNAUTHORIZED,'Wrong email or password');
+        abort(Response::HTTP_UNAUTHORIZED,Lang::get('messages.login.errors.wrong_data'));
     }
 
     /**
@@ -55,8 +56,8 @@ class LoginService
         $patient = $this->patientRepository->findBy('mobile',$requestData['mobile']);
         if($patient && $this->validateCorrectPassword($requestData['password'],$patient->password)){
             $token = JWTAuth::fromUser($patient);
-            return response()->json(['results' => array('token' => $token), 'messages' => 'Token generated successfully'] , Response::HTTP_OK);
+            return response()->json(['token' => $token] , Response::HTTP_OK);
         }
-        abort(Response::HTTP_UNAUTHORIZED,'Wrong email or password');
+        abort(Response::HTTP_UNAUTHORIZED,Lang::get('messages.login.errors.wrong_data'));
     }
 }

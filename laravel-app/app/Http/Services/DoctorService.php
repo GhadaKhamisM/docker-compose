@@ -7,6 +7,7 @@ use App\Repositories\DoctorRepository;
 use App\Http\Filters\DoctorFilter;
 use App\Models\Doctor;
 use App\Http\Services\UploadFile;
+use Lang;
 
 class DoctorService
 {
@@ -35,5 +36,6 @@ class DoctorService
 
     public function delete(Doctor $doctor){
         $this->doctorRepository->delete($doctor->id);
+        return response()->json(['messages' => Lang::get('messages.doctors.success.delete')] , Response::HTTP_OK);
     }
 }

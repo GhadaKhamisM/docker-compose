@@ -6,6 +6,7 @@ use Illuminate\Http\Response;
 use App\Repositories\ServiceRepository;
 use App\Http\Filters\ServiceFilter;
 use App\Models\Service;
+use Lang;
 
 class ServiceService
 {
@@ -30,6 +31,10 @@ class ServiceService
     }
 
     public function delete(Service $service){
+        if($service->doctors()->count()){
+            abort(Response::HTTP_METHOD_NOT_ALLOWED, Lang::get('messages.services.errors.delete'));
+        }
         $this->serviceRepository->delete($service->id);
+        return response()->json(['message' => Lang::get('messages.services.success.delete')] , Response::HTTP_OK);
     }
 }

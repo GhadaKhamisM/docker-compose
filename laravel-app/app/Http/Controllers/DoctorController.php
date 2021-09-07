@@ -42,7 +42,6 @@ class DoctorController extends Controller
     }
 
     public function destroy(Doctor $doctor){
-        $this->doctorService->delete($doctor);
-        return response()->json(['results' => null, 'messages' => 'Doctor deleted successfully'] , Response::HTTP_OK);
+        return $this->doctorService->delete($doctor);
     }
 }

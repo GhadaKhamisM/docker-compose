@@ -25,6 +25,6 @@ class RegisterService
     public function patientRegistration(array $patientData){
         $patient = $this->patientRepository->create($patientData);
         $token = JWTAuth::fromUser($patient);
-        return response()->json(['results' => array('token' => $token), 'messages' => 'Your account successfully'] , Response::HTTP_OK);
+        return response()->json(['token' => $token] , Response::HTTP_OK);
     }
 }
