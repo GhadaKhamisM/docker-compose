@@ -21,7 +21,6 @@ class RegisterTest extends TestCase
     public function testPatientRegisterWithoutBody()
     {
         $body = array();
-        $faker = Faker::create();
         $response = $this->json('POST',route('auth.patient-register'), $body);
         $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
     }
