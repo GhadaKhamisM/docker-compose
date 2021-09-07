@@ -27,8 +27,7 @@ class DoctorRepository
         unset($doctorData['services']);
         unset($doctorData['doctor_week_days']);
         Doctor::where('id',$doctor->id)->update($doctorData);
-        $this->detachDoctorData($doctor);
-        $this->attachDoctorData($doctor,$data);
+        $this->updateDoctorRelations($doctor,$data);
     }
 
     public function getDoctor(string $filter, string $value)
@@ -45,8 +44,9 @@ class DoctorRepository
         $doctor->doctorWeekDays()->createMany($data['doctor_week_days']);
     }
 
-    public function detachDoctorData(Doctor $doctor){
-        $doctor->services()->detach();
+    public function updateDoctorRelations(Doctor $doctor,Array $data){
+        $doctor->services()->sync($data['services']);
         $doctor->doctorWeekDays()->delete();
+        $doctor->doctorWeekDays()->createMany($data['doctor_week_days']);
     }
 }
