@@ -2,7 +2,6 @@
 
 namespace App\Http\Services;
 
-use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\Response;
 use App\Repositories\ServiceRepository;
 use App\Http\Filters\ServiceFilter;
@@ -10,11 +9,10 @@ use App\Models\Service;
 
 class ServiceService
 {
-    private $database, $serviceRepository;
+    private $serviceRepository;
 
-    public function __construct(DatabaseManager $database, ServiceRepository $serviceRepository)
+    public function __construct(ServiceRepository $serviceRepository)
     {
-        $this->database = $database;
         $this->serviceRepository = $serviceRepository;
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Services;
 
-use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\Response;
 use App\Repositories\DoctorRepository;
 use App\Http\Filters\DoctorFilter;
@@ -12,11 +11,10 @@ use App\Http\Services\UploadFile;
 class DoctorService
 {
     use UploadFile;
-    private $database, $doctorRepository, $uploadService;
+    private $doctorRepository, $uploadService;
 
-    public function __construct(DatabaseManager $database, DoctorRepository $doctorRepository)
+    public function __construct(DoctorRepository $doctorRepository)
     {
-        $this->database = $database;
         $this->doctorRepository = $doctorRepository;
     }
 

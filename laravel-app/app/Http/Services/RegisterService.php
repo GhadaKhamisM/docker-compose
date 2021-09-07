@@ -3,18 +3,16 @@
 namespace App\Http\Services;
 
 use Hash;
-use Illuminate\Database\DatabaseManager;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Response;
 use App\Repositories\PatientRepository;
 
 class RegisterService
 {
-    private $database, $patientRepository;
+    private $patientRepository;
 
-    public function __construct(DatabaseManager $database, PatientRepository $patientRepository)
+    public function __construct(PatientRepository $patientRepository)
     {
-        $this->database = $database;
         $this->patientRepository = $patientRepository;
     }
 
