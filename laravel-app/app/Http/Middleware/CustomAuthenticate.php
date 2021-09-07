@@ -8,6 +8,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 use Illuminate\Http\Response;
+use Lang;
 
 class CustomAuthenticate extends BaseMiddleware
 {
@@ -25,11 +26,11 @@ class CustomAuthenticate extends BaseMiddleware
     public function handle($request, Closure $next)
     {
         if (! $this->auth->parser()->setRequest($request)->hasToken()) {
-            abort(Response::HTTP_UNAUTHORIZED,'Token not provided');
+            abort(Response::HTTP_UNAUTHORIZED,Lang::get('messages.login.errors.token'));
         }
         try {
             if (! $this->auth->parseToken()->authenticate()) {
-                abort(Response::HTTP_UNAUTHORIZED,'User not found');
+                abort(Response::HTTP_UNAUTHORIZED,Lang::get('messages.login.errors.user_not_found'));
             }
         } catch (JWTException $e) {
             abort(Response::HTTP_UNAUTHORIZED,$e->getMessage());

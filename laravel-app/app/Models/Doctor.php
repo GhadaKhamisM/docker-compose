@@ -62,8 +62,8 @@ class Doctor extends Authenticatable implements JWTSubject
     {
         parent::boot();
         static::updating(function ($model) {
-            $model->services()->detach();
-            $model->doctorWeekDays()->delete();
+            // $model->services()->detach();
+            // $model->doctorWeekDays()->delete();
         });
         static::deleted(function ($model) {
             $model->services()->detach();

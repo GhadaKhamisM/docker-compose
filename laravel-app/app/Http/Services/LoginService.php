@@ -3,20 +3,19 @@
 namespace App\Http\Services;
 
 use Hash;
-use Illuminate\Database\DatabaseManager;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Response;
 use App\Repositories\PatientRepository;
 use App\Repositories\AdminRepository;
+use Lang;
 
 class LoginService
 {
-    private $database, $patientRepository, $adminRepository;
+    private $patientRepository, $adminRepository;
 
-    public function __construct(DatabaseManager $database, PatientRepository $patientRepository,
+    public function __construct(PatientRepository $patientRepository,
         AdminRepository $adminRepository)
     {
-        $this->database = $database;
         $this->patientRepository = $patientRepository;
         $this->adminRepository = $adminRepository;
     }
@@ -39,12 +38,12 @@ class LoginService
      * @return token
      */
     public function adminLogin(array $requestData){
-        $admin = $this->adminRepository->getAdmin('username',$requestData['username']);
+        $admin = $this->adminRepository->findBy('username',$requestData['username']);
         if($admin && $this->validateCorrectPassword($requestData['password'],$admin->password)){
             $token = JWTAuth::fromUser($admin);
-            return response()->json(['results' => array('token' => $token), 'messages' => 'Token generated successfully'] , Response::HTTP_OK);
+            return response()->json(['token' => $token] , Response::HTTP_OK);
         }
-        abort(Response::HTTP_UNAUTHORIZED,'Wrong email or password');
+        abort(Response::HTTP_UNAUTHORIZED,Lang::get('messages.login.errors.wrong_data'));
     }
 
     /**
@@ -54,11 +53,11 @@ class LoginService
      * @return token
      */
     public function patientLogin(array $requestData){
-        $patient = $this->patientRepository->getPatient('mobile',$requestData['mobile']);
+        $patient = $this->patientRepository->findBy('mobile',$requestData['mobile']);
         if($patient && $this->validateCorrectPassword($requestData['password'],$patient->password)){
             $token = JWTAuth::fromUser($patient);
-            return response()->json(['results' => array('token' => $token), 'messages' => 'Token generated successfully'] , Response::HTTP_OK);
+            return response()->json(['token' => $token] , Response::HTTP_OK);
         }
-        abort(Response::HTTP_UNAUTHORIZED,'Wrong email or password');
+        abort(Response::HTTP_UNAUTHORIZED,Lang::get('messages.login.errors.wrong_data'));
     }
 }

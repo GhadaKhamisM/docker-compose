@@ -11,7 +11,7 @@ class ServiceFilter extends QueryFilter
      */
     public function name(string $name)
     {
-        $this->builder->whereRaw('name_arabic like ? OR name_english like ?', array('%'.$name.'%','%'.$name.'%'));
+        $this->builder->whereRaw('(name_arabic like ? OR name_english like ?)', array('%'.$name.'%','%'.$name.'%'));
     }
 
     /**
@@ -20,5 +20,29 @@ class ServiceFilter extends QueryFilter
     public function description(string $description)
     {
         $this->builder->whereRaw('name like ?', array('%'.$description.'%'));
+    }
+
+    /**
+     * Sort the services by the given order and field.
+     *
+     * @param  array  $value
+     */
+    public function sort(string $value)
+    {
+        [$field,$order] = explode(',', $value);
+        $this->builder->orderBy($field, $order);
+    }
+
+    /**
+     * Paginate the services by the given limit and field.
+     *
+     * @param  array  $value
+     */
+    public function pagination(string $value)
+    {
+        [$pageSize,$pageNumber] = explode(',', $value);
+        $count = count($this->builder->get());
+        $skip  = ($pageNumber - 1) * $pageSize;
+        $this->builder->skip($skip)->take($pageSize);
     }
 }

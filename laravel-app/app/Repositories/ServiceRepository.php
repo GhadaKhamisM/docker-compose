@@ -3,33 +3,24 @@
 namespace App\Repositories;
 
 use App\Models\Service;
-use App\Http\Filters\ServiceFilter;
 
-class ServiceRepository
+class ServiceRepository extends BaseRepository
 {
 
     public function __construct()
     {
+        parent::__construct(Service::class);
     }
 
     public function create(Array $data){
-        return Service::create($data);
-    }
-
-    public function getAll(ServiceFilter $filter){
-        return Service::filter($filter)->get();
+        return $this->model->create($data);
     }
 
     public function update(int $id,Array $data){
-        Service::where('id',$id)->update($data);
-    }
-
-    public function getService(string $filter, string $value)
-    {
-        return Service::where($filter,$value)->first();
+        $this->findBy('id',$id)->update($data);
     }
 
     public function delete(int $id){
-        Service::where('id',$id)->delete();
+        $this->findBy('id',$id)->delete();
     }
 }

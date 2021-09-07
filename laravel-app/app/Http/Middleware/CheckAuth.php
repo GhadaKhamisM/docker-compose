@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
+use Lang;
 
 class CheckAuth
 {
@@ -20,6 +21,6 @@ class CheckAuth
         if($gruard && Auth::guard($gruard)->check()){
             return $next($request);
         }
-        abort(Response::HTTP_FORBIDDEN,'Not authorized');
+        abort(Response::HTTP_FORBIDDEN,Lang::get('messages.login.errors.authorization'));
     }
 }

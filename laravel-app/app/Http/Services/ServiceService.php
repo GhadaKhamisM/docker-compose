@@ -2,19 +2,18 @@
 
 namespace App\Http\Services;
 
-use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\Response;
 use App\Repositories\ServiceRepository;
 use App\Http\Filters\ServiceFilter;
 use App\Models\Service;
+use Lang;
 
 class ServiceService
 {
-    private $database, $serviceRepository;
+    private $serviceRepository;
 
-    public function __construct(DatabaseManager $database, ServiceRepository $serviceRepository)
+    public function __construct(ServiceRepository $serviceRepository)
     {
-        $this->database = $database;
         $this->serviceRepository = $serviceRepository;
     }
 
@@ -28,10 +27,14 @@ class ServiceService
 
     public function update(Service $service,array $data){
         $this->serviceRepository->update($service->id,$data);
-        return $this->serviceRepository->getService('id',$service->id);
+        return $this->serviceRepository->findBy('id',$service->id);
     }
 
     public function delete(Service $service){
+        if($service->doctors()->count()){
+            abort(Response::HTTP_METHOD_NOT_ALLOWED, Lang::get('messages.services.errors.delete'));
+        }
         $this->serviceRepository->delete($service->id);
+        return response()->json(['message' => Lang::get('messages.services.success.delete')] , Response::HTTP_OK);
     }
 }

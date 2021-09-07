@@ -2,21 +2,20 @@
 
 namespace App\Http\Services;
 
-use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\Response;
 use App\Repositories\DoctorRepository;
 use App\Http\Filters\DoctorFilter;
 use App\Models\Doctor;
 use App\Http\Services\UploadFile;
+use Lang;
 
 class DoctorService
 {
     use UploadFile;
-    private $database, $doctorRepository, $uploadService;
+    private $doctorRepository, $uploadService;
 
-    public function __construct(DatabaseManager $database, DoctorRepository $doctorRepository)
+    public function __construct(DoctorRepository $doctorRepository)
     {
-        $this->database = $database;
         $this->doctorRepository = $doctorRepository;
     }
 
@@ -32,10 +31,11 @@ class DoctorService
     public function update(Doctor $doctor,array $data){
         $data['photo'] = $this->uploadFile($data['photo'],'/doctors');
         $this->doctorRepository->update($doctor,$data);
-        return $this->doctorRepository->getDoctor('id',$doctor->id);
+        return $this->doctorRepository->findBy('id',$doctor->id);
     }
 
     public function delete(Doctor $doctor){
         $this->doctorRepository->delete($doctor->id);
+        return response()->json(['messages' => Lang::get('messages.doctors.success.delete')] , Response::HTTP_OK);
     }
 }
