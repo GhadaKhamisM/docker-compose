@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Http\Response;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Models\Servie;
+use App\Models\Service;
 use App\Models\Admin;
 use Faker\Factory as Faker;
 
@@ -50,7 +50,7 @@ class StoreServiceTest extends TestCase
      */
     public function testStoreServiceWithDuplicateName()
     {
-        $service = factory(Servie::class)->create();
+        $service = factory(Service::class)->create();
         $body = array('name_arabic' => $service->name_arabic,
             'name_english' => $service->name_english,
             'description' => $service->description);
