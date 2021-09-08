@@ -11,7 +11,7 @@ class WeekDay extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'name_arabic', 'name_english',
+        'name_arabic', 'name_english', 'day_index',
     ];
 
     public function doctors(){

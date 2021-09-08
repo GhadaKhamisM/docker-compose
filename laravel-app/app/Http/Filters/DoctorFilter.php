@@ -33,6 +33,16 @@ class DoctorFilter extends QueryFilter
     }
 
     /**
+     * @param string $weekDayId
+     */
+    public function week_day_id(string $weekDayId)
+    {
+        $this->builder->whereHas('doctorWeekDays', function($query) use ($weekDayId){
+            $query->where('week_day_id', $weekDayId);
+        });
+    }
+
+    /**
      * Sort the services by the given order and field.
      *
      * @param  array  $value

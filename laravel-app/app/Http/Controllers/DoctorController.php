@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Services\DoctorService;
 use App\Http\Requests\StoreDoctorRequest;
 use App\Http\Requests\UpdateDoctorRequest;
+use App\Http\Requests\DoctorDaysRequest;
 use App\Models\Doctor;
 use App\Http\Resources\DoctorResource;
 use App\Http\Filters\DoctorFilter;
@@ -43,5 +44,9 @@ class DoctorController extends Controller
 
     public function destroy(Doctor $doctor){
         return $this->doctorService->delete($doctor);
+    }
+
+    public function getDoctorAvailableDates(DoctorDaysRequest $request,Doctor $doctor){
+        return $this->doctorService->getDoctorAvailableDates($doctor, $request->validated());
     }
 }

@@ -5,15 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ServiceTranslation extends Model
+class Status extends Model
 {
     use SoftDeletes;
-    use LocalizeTrait;
 
     protected $fillable = [
-        'name', 'description', 'service_id', 'locale',
+        
     ];
 
     protected $hidden = [
     ];
+
+    public function statusTranslations()
+    { 
+        return $this->hasMany(StatusTranslation::class); 
+    }
 }
