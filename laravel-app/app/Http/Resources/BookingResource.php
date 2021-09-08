@@ -20,6 +20,7 @@ class BookingResource extends JsonResource
             'visit_date' => $this->visit_date,
             'doctor_week_day' => new DoctorWeekDayResource($this->doctorWeekDay),
             'doctor' => new DoctorResource($this->doctor),
+            'patient' => new PatientResource($this->patient)
         );
     }
 }
