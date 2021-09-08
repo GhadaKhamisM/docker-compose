@@ -7,16 +7,18 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Response;
 use App\Repositories\PatientRepository;
 use App\Repositories\AdminRepository;
+use App\Repositories\DoctorRepository;
 use Lang;
 
 class LoginService
 {
-    private $patientRepository, $adminRepository;
+    private $patientRepository, $adminRepository, $doctorRepository;
 
     public function __construct(PatientRepository $patientRepository,
-        AdminRepository $adminRepository)
+        AdminRepository $adminRepository, DoctorRepository $doctorRepository)
     {
         $this->patientRepository = $patientRepository;
+        $this->doctorRepository = $doctorRepository;
         $this->adminRepository = $adminRepository;
     }
 
@@ -56,6 +58,21 @@ class LoginService
         $patient = $this->patientRepository->findBy('mobile',$requestData['mobile']);
         if($patient && $this->validateCorrectPassword($requestData['password'],$patient->password)){
             $token = JWTAuth::fromUser($patient);
+            return response()->json(['token' => $token] , Response::HTTP_OK);
+        }
+        abort(Response::HTTP_UNAUTHORIZED,Lang::get('messages.login.errors.wrong_data'));
+    }
+
+    /**
+     * login as doctor
+     * 
+     * @param $requestData
+     * @return token
+     */
+    public function doctorLogin(array $requestData){
+        $doctor = $this->doctorRepository->findBy('mobile',$requestData['mobile']);
+        if($doctor && $this->validateCorrectPassword($requestData['password'],$doctor->password)){
+            $token = JWTAuth::fromUser($doctor);
             return response()->json(['token' => $token] , Response::HTTP_OK);
         }
         abort(Response::HTTP_UNAUTHORIZED,Lang::get('messages.login.errors.wrong_data'));

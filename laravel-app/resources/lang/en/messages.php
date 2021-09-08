@@ -32,6 +32,15 @@ return [
             'authorization' => 'Not authorized',
             'user_not_found' => 'User not found',
         ]
+    ],
+    'booking' => [
+        'success' => [
+            'accept' => 'Booking successfully accepted',
+            'cancel' => 'Booking successfully canceled',
+        ],
+        'errors' => [
+            'status' => 'Booking status can\'t  changed',
+        ]
     ]
 
 ];

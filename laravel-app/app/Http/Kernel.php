@@ -66,6 +66,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'auth.jwt' => \App\Http\Middleware\CustomAuthenticate::class,
         'auth.check' => \App\Http\Middleware\CheckAuth::class,
-        'jwt.guard' => \App\Http\Middleware\ChangeDefaultGuard::class
+        'jwt.guard' => \App\Http\Middleware\ChangeDefaultGuard::class,
+        'booking.access' => \App\Http\Middleware\CheckBookingAccess::class,
+        'booking.status' =>  \App\Http\Middleware\CheckBookingStatus::class,
     ];
 }
