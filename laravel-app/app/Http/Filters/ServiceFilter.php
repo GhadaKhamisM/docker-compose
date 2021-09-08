@@ -6,12 +6,16 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ServiceFilter extends QueryFilter
 {
+    use PaginationFilter;
+
     /**
      * @param string $name
      */
     public function name(string $name)
     {
-        $this->builder->whereRaw('(name_arabic like ? OR name_english like ?)', array('%'.$name.'%','%'.$name.'%'));
+        $this->builder->whereHas('serviceTranslations', function($query) use ($name){
+            $query->whereRaw('(name like ?)', array('%'.$name.'%'));
+        });
     }
 
     /**
@@ -19,7 +23,9 @@ class ServiceFilter extends QueryFilter
      */
     public function description(string $description)
     {
-        $this->builder->whereRaw('name like ?', array('%'.$description.'%'));
+        $this->builder->whereHas('serviceTranslations', function($query) use ($description){
+            $query->whereRaw('(description like ?)', array('%'.$description.'%'));
+        });
     }
 
     /**
@@ -29,20 +35,7 @@ class ServiceFilter extends QueryFilter
      */
     public function sort(string $value)
     {
-        [$field,$order] = explode(',', $value);
-        $this->builder->orderBy($field, $order);
-    }
-
-    /**
-     * Paginate the services by the given limit and field.
-     *
-     * @param  array  $value
-     */
-    public function pagination(string $value)
-    {
-        [$pageSize,$pageNumber] = explode(',', $value);
-        $count = count($this->builder->get());
-        $skip  = ($pageNumber - 1) * $pageSize;
-        $this->builder->skip($skip)->take($pageSize);
+        list($field,$order) = explode(',', $value);
+        $this->builder->join('service_translations','service_translations.service_id','services.id')->orderBy($field, $order);
     }
 }
