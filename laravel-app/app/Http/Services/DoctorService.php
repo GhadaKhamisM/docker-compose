@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Http\Services;
+
+use Illuminate\Http\Response;
+use App\Repositories\DoctorRepository;
+use App\Http\Filters\DoctorFilter;
+use App\Models\Doctor;
+use App\Http\Services\UploadFile;
+use Lang;
+
+class DoctorService
+{
+    use UploadFile;
+    private $doctorRepository, $uploadService;
+
+    public function __construct(DoctorRepository $doctorRepository)
+    {
+        $this->doctorRepository = $doctorRepository;
+    }
+
+    public function create(array $data){
+        $data['photo'] = $this->uploadFile($data['photo'],'/doctors');
+        return $this->doctorRepository->create($data);
+    }
+
+    public function getAll(DoctorFilter $filter){
+        return $this->doctorRepository->getAll($filter);
+    }
+
+    public function update(Doctor $doctor,array $data){
+        $data['photo'] = $this->uploadFile($data['photo'],'/doctors');
+        $this->doctorRepository->update($doctor,$data);
+        return $this->doctorRepository->findBy('id',$doctor->id);
+    }
+
+    public function delete(Doctor $doctor){
+        $this->doctorRepository->delete($doctor->id);
+        return response()->json(['messages' => Lang::get('messages.doctors.success.delete')] , Response::HTTP_OK);
+    }
+}
