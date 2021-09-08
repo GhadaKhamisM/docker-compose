@@ -18,6 +18,10 @@ class BookingController extends Controller
         $this->bookingService = $bookingService;
     }
 
+    public function show(Booking $booking){
+        return new BookingResource($booking);
+    }
+
     public function store(StoreBookingRequest $request){
         $booking = $this->bookingService->create($request->validated());
         return new BookingResource($booking);
