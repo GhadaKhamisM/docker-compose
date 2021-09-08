@@ -27,7 +27,7 @@ class DoctorRepository extends BaseRepository
     }
 
     public function delete(int $id){
-        $this->findBy('id',$id)->first()->delete();
+        $this->findBy('id',$id)->delete();
     }
 
     public function attachDoctorData(Doctor $doctor,Array $data){

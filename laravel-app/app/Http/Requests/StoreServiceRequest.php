@@ -24,9 +24,10 @@ class StoreServiceRequest extends FormRequest
     public function rules()
     {
         return [
-            'name_arabic' => 'required|min:3|max:150|unique:services,name_arabic,NULL,id,deleted_at,NULL',
-            'name_english' => 'required|min:3|max:150|unique:services,name_english,NULL,id,deleted_at,NULL',
-            'description' => 'sometimes|min:3|max:300',
+            'service_translations' => 'required|array',
+            'service_translations.*.name' => 'required|min:3|max:150|unique:service_translations,name,NULL,id,deleted_at,NULL',
+            'service_translations.*.description' => 'sometimes|min:3|max:300',
+            'service_translations.*.locale' => 'required|distinct'
         ];
     }
 }

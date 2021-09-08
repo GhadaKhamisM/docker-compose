@@ -12,7 +12,7 @@ class Service extends Model
     use Filterable;
 
     protected $fillable = [
-        'name_arabic', 'name_english', 'description',
+        
     ];
 
     protected $hidden = [
@@ -21,5 +21,18 @@ class Service extends Model
     public function doctors()
     {
         return $this->belongsToMany(Doctor::class);
+    }
+
+    public function serviceTranslations()
+    { 
+        return $this->hasMany(ServiceTranslation::class); 
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::deleted(function ($model) {
+            $model->serviceTranslations()->delete();
+        });
     }
 }

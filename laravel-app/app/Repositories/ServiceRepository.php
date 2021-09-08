@@ -13,11 +13,18 @@ class ServiceRepository extends BaseRepository
     }
 
     public function create(Array $data){
-        return $this->model->create($data);
+        $service_translations = $data['service_translations'];
+        unset($data['service_translations']);
+        $service = $this->model->create($data);
+        $service->serviceTranslations()->createMany($service_translations);
+        return $service;
     }
 
-    public function update(int $id,Array $data){
-        $this->findBy('id',$id)->update($data);
+    public function update(Service $service,Array $data){
+        $service_translations = $data['service_translations'];
+        //$this->findBy('id',$service->id)->update($data);
+        $service->serviceTranslations()->delete();
+        $service->serviceTranslations()->createMany($service_translations);
     }
 
     public function delete(int $id){

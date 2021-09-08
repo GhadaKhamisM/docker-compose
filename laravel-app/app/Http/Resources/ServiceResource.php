@@ -16,9 +16,8 @@ class ServiceResource extends JsonResource
     {
         return array(
             'id' => $this->id,
-            'name_arabic' => $this->name_arabic,
-            'name_english' => $this->name_english,
-            'description' => $this->description,
+            'name' => $this->serviceTranslations()->localize()->name?? null,
+            'description' => $this->serviceTranslations()->localize()->description?? null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         );
