@@ -9,7 +9,9 @@ use Illuminate\Http\Response;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Service;
 use App\Models\Admin;
+use App\Models\ServiceTranslation;
 use Faker\Factory as Faker;
+use App;
 
 class StoreServiceTest extends TestCase
 {
@@ -21,9 +23,11 @@ class StoreServiceTest extends TestCase
     public function testStoreServiceWithoutAuthentication()
     {
         $faker = Faker::create();
-        $body = array('name_arabic' => $faker->name(),
-            'name_english' => $faker->name(),
-            'description' => $faker->text()); 
+        $body = array('service_translations' => array(array(
+            'name' => $faker->name(),
+            'description' => $faker->text(),
+            'locale' => App::getlocale()
+        )));
         $response = $this->json('POST',route('admin.services.store'), $body,array('Authorization' => ''));
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
@@ -51,9 +55,13 @@ class StoreServiceTest extends TestCase
     public function testStoreServiceWithDuplicateName()
     {
         $service = factory(Service::class)->create();
-        $body = array('name_arabic' => $service->name_arabic,
-            'name_english' => $service->name_english,
-            'description' => $service->description);
+        $serviceTranslation = factory(ServiceTranslation::class)->make();
+        $service->serviceTranslations()->save($serviceTranslation);
+        $body = array('service_translations' => array(array(
+            'name' => $serviceTranslation->name,
+            'description' => $serviceTranslation->description,
+            'locale' => $serviceTranslation->locale
+        )));
         $admin = Admin::where('username', config('admin.SUPPER_ADMIN_USERNAME'))->first();
         $token = JWTAuth::fromUser($admin);     
 
@@ -69,9 +77,11 @@ class StoreServiceTest extends TestCase
     public function testSuccessStoreService()
     {
         $faker = Faker::create();
-        $body = array('name_arabic' => $faker->name(),
-            'name_english' => $faker->name(),
-            'description' => $faker->text()); 
+        $body = array('service_translations' => array(array(
+            'name' => $faker->name(),
+            'description' => $faker->text(),
+            'locale' => App::getlocale()
+        )));
         $admin = Admin::where('username', config('admin.SUPPER_ADMIN_USERNAME'))->first();
         $token = JWTAuth::fromUser($admin);       
         $response = $this->json('POST',route('admin.services.store'), $body,array('Authorization' => 'Bearer'. $token));

@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Models\Service;
+use App\Models\ServiceTranslation;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 
@@ -17,6 +17,10 @@ use Illuminate\Support\Str;
 |
 */
 
-$factory->define(Service::class, function (Faker $faker) {
-    return array();
+$factory->define(ServiceTranslation::class, function (Faker $faker) {
+    return [
+        'name' => $faker->name(),
+        'locale' => App::getlocale(),
+        'description' => $faker->text(),
+    ];
 });
