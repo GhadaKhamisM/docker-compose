@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::name('admin.')->middleware(['jwt.guard:admin','jwt.auth','auth.check:admin'])->prefix('v1')->group(function () {
+Route::name('admin.')->middleware(['jwt.guard:admin','auth.jwt','auth.check:admin'])->prefix('v1')->group(function () {
     Route::resource('services', 'ServiceController');
     Route::resource('doctors', 'DoctorController');
 });

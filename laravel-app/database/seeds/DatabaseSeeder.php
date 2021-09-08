@@ -13,5 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(AdminSeeder::class);
         $this->call(WeekDaySeeder::class);
+        $this->call(StatusSeeder::class);
+        $this->call(StatusTranslationSeeder::class);
     }
 }

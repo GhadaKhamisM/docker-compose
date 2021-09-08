@@ -13,7 +13,13 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::name('patient.')->middleware(['jwt.guard:patient','jwt.auth','auth.check:patient'])->prefix('v1')->group(function () {
+Route::name('patient.')->middleware(['jwt.guard:patient'])->prefix('v1')->group(function () {
     Route::get('services', 'ServiceController@index')->name('services.index');
     Route::get('doctors', 'DoctorController@index')->name('doctors.index');
+    Route::get('doctors/{doctor}', 'DoctorController@show')->name('doctors.show');
+    
+    Route::middleware(['auth.jwt','auth.check:patient'])->group(function () {
+        Route::get('doctors/{doctor}/days', 'DoctorController@getDoctorAvailableDates')->name('doctors.dates');
+        Route::post('bookings', 'BookingController@store')->name('bookings.store');
+    });
 });
