@@ -16,4 +16,8 @@ class ServiceTranslation extends Model
 
     protected $hidden = [
     ];
+
+    public function service(){
+        return $this->belongsTo(Service::class); 
+    }
 }

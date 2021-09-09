@@ -67,6 +67,8 @@ class StoreServiceTest extends TestCase
 
         $response = $this->json('POST',route('admin.services.store'), $body,array('Authorization' => 'Bearer'. $token));
         $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
+        $service->serviceTranslations()->forceDelete();
+        $service->forceDelete();
     }
 
     /**
@@ -87,5 +89,11 @@ class StoreServiceTest extends TestCase
         $response = $this->json('POST',route('admin.services.store'), $body,array('Authorization' => 'Bearer'. $token));
         
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $service = ServiceTranslation::where('name',$body['service_translations'][0]['name'])
+            ->where('description',$body['service_translations'][0]['description'])
+            ->where('locale',$body['service_translations'][0]['locale'])
+            ->first()->service;
+        $service->serviceTranslations()->forceDelete();
+        $service->forceDelete();
     }
 }

@@ -8,6 +8,7 @@ use Tests\TestCase;
 use Illuminate\Http\Response;
 use Faker\Factory as Faker;
 use App\Models\Patient;
+use App\Models\Doctor;
 
 class LoginTest extends TestCase
 {
@@ -121,5 +122,64 @@ class LoginTest extends TestCase
         $response = $this->json('POST',route('auth.patient-login'), $body);
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $patient->forceDelete();
+    }
+
+    /**
+     * A doctor login faild test without body.
+     *
+     * @return void
+     */
+    public function testDoctorFaildLoginWithoutBody()
+    {
+        $body = array(); 
+        $response = $this->json('POST',route('auth.doctor-login'), $body);
+
+        $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
+    }
+
+    /**
+     * A doctor login faild test with Invalid data.
+     *
+     * @return void
+     */
+    public function testDoctorFaildLoginWithInvalidData()
+    {
+        $faker = Faker::create();
+        $body = array('mobile' => $faker->numerify('###########'),
+            'password' => $faker->password()); 
+        $response = $this->json('POST',route('auth.doctor-login'), $body);
+
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    /**
+     * A doctor login faild test without password.
+     *
+     * @return void
+     */
+    public function testDoctorFaildLoginWithoutPassword()
+    {
+        $faker = Faker::create();
+        $body = array('mobile' => $faker->numerify('###########'),); 
+        $response = $this->json('POST',route('auth.admin-login'), $body);
+
+        $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
+    }
+
+    /**
+     * A doctor login success test.
+     *
+     * @return void
+     */
+    public function testDoctorSuccessLogin()
+    {
+        $doctor = factory(Doctor::class)->create();
+        $body = array('mobile' => $doctor->mobile,
+            'password' => 'secret'); 
+        $response = $this->json('POST',route('auth.doctor-login'), $body);
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $doctor->forceDelete();
     }
 }
