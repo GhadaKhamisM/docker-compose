@@ -16,7 +16,7 @@ use App;
 class DeleteServiceTest extends TestCase
 {
     /**
-     * Delte service test without authenticate.
+     * Delete service test without authenticate.
      *
      * @return void
      */

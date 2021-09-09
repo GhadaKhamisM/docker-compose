@@ -16,7 +16,7 @@ use App;
 class DeleteDoctorTest extends TestCase
 {
     /**
-     * Delte docotr test without authenticate.
+     * Delete doctor test without authenticate.
      *
      * @return void
      */
@@ -32,7 +32,7 @@ class DeleteDoctorTest extends TestCase
     }
 
     /**
-     * A DELETE docotr test example not found.
+     * A DELETE doctor test example not found.
      *
      * @return void
      */
@@ -46,7 +46,7 @@ class DeleteDoctorTest extends TestCase
     }
 
     /**
-     * A Delete docotr test success.
+     * A Delete doctor test success.
      *
      * @return void
      */

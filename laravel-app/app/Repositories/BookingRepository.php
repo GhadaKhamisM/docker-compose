@@ -35,9 +35,9 @@ class BookingRepository extends BaseRepository
             ->get();
     }
 
-    public function getDoctorBooking(BookingFilter $filter, int $docotrId){
+    public function getDoctorBooking(BookingFilter $filter, int $doctorId){
         return $this->model->filter($filter)
-            ->where('doctor_id',$docotrId)
+            ->where('doctor_id',$doctorId)
             ->get();
     }
 }
