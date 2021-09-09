@@ -80,6 +80,7 @@ class RegisterTest extends TestCase
             'password' => $patient->password);
         $response = $this->json('POST',route('auth.patient-register'), $body);
         $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
+        $patient->forceDelete();
     }
 
     /**
@@ -95,5 +96,6 @@ class RegisterTest extends TestCase
             'password' => $faker->password());
         $response = $this->json('POST',route('auth.patient-register'), $body);
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        Patient::where('mobile',$body['mobile'])->where('name',$body['name'])->forceDelete();
     }
 }
