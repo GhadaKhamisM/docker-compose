@@ -25,7 +25,7 @@ class StoreBookingRequest extends FormRequest
     {
         return [
             'doctor_id' => 'required|exists:doctors,id,deleted_at,NULL',
-            'doctor_week_day_id' => 'required|exists:doctor_week_days,id,deleted_at,NULL',
+            'doctor_week_day_id' => 'required|exists:doctor_week_days,id,doctor_id,'.$this->doctor_id.',deleted_at,NULL',
             'visit_date' => 'required|date|after_or_equal:today|date_format:Y-m-d',
         ];
     }

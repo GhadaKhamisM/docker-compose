@@ -40,6 +40,7 @@ return [
         ],
         'errors' => [
             'status' => 'Booking status can\'t  changed',
+            'not_available' => 'Booking is not available at this time'
         ]
     ]
 
