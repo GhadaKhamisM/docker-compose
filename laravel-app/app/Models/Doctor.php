@@ -58,6 +58,10 @@ class Doctor extends Authenticatable implements JWTSubject
         return $this->hasMany(DoctorWeekDay::class);
     }
 
+    public function bookings(){
+        return $this->hasMany(Booking::class);
+    }
+
     protected static function boot()
     {
         parent::boot();
