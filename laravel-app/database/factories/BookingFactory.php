@@ -3,6 +3,8 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Models\Booking;
+use App\Models\Patient;
+use App\Models\Doctor;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -19,11 +21,14 @@ use Carbon\Carbon;
 */
 
 $factory->define(Booking::class, function (Faker $faker) {
+    $doctor = factory(Doctor::class)->state('doctorWeekDays')->create();
+    $patient = factory(Patient::class)->create();
+    
     return [
         'status_id' => config('statuses.pending'),
         'visit_date' => Carbon::now()->format('Y-m-d'),
-        'patient_id' => null,
-        'doctor_id' => null,
-        'doctor_week_day_id' => null,
+        'patient_id' => $patient->id,
+        'doctor_id' => $doctor->id,
+        'doctor_week_day_id' => $doctor->doctorWeekDays()->first()->id,
     ];
 });

@@ -6,12 +6,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Http\Response;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Doctor;
 use App\Models\Admin;
 use App\Models\DoctorWeekDay;
 use App\Models\Service;
-use App\Models\ServiceTranslation;
 use Faker\Factory as Faker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -20,6 +18,12 @@ use App;
 
 class StoreDoctorTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        Storage::fake('avatars');
+    }
+
     /**
      * Create doctor test without authenticate.
      *
@@ -28,13 +32,13 @@ class StoreDoctorTest extends TestCase
     public function testStoreDoctorWithoutAuthentication()
     {
         $faker = Faker::create();
-        $service = Service::first();
+        $service = factory(Service::class)->state('serviceTranslations')->create();
         $body = array(
             'name_arabic' => $faker->name(),
             'name_english' => $faker->name(),
             'mobile' => $faker->numerify('###########'),
             'password' => 'secret', // password,
-            'photo' => $faker->image('public/uploads/doctors',640,480, null, true),
+            'photo' => UploadedFile::fake()->image('avatar.jpg'),
             'time_slot' => $faker->numberBetween(0, 60),
             'email' => $faker->email(), 
             'doctor_week_days' => array(array(
@@ -46,7 +50,7 @@ class StoreDoctorTest extends TestCase
                 'service_id' => $service->id
             ))
         );
-        $response = $this->json('POST',route('admin.doctors.store'), $body,array('Authorization' => ''));
+        $response = $this->json('POST',route('admin.doctors.store'), $body);
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
@@ -59,8 +63,7 @@ class StoreDoctorTest extends TestCase
     {
         $body = array(); 
         $admin = Admin::where('username', config('admin.SUPPER_ADMIN_USERNAME'))->first();
-        $token = JWTAuth::fromUser($admin);       
-        $response = $this->json('POST',route('admin.doctors.store'), $body,array('Authorization' => 'Bearer'. $token));
+        $response = $this->actingAs($admin,'admin')->json('POST',route('admin.doctors.store'), $body);
         
         $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
     }
@@ -73,8 +76,7 @@ class StoreDoctorTest extends TestCase
     public function testSuccessStoreDoctor()
     {
         $faker = Faker::create();
-        Storage::fake('avatars');
-        $service = Service::first();
+        $service = factory(Service::class)->state('serviceTranslations')->create();
         $body = array(
             'name_arabic' => $faker->name(),
             'name_english' => $faker->name(),
@@ -93,14 +95,8 @@ class StoreDoctorTest extends TestCase
             ))
         );
         $admin = Admin::where('username', config('admin.SUPPER_ADMIN_USERNAME'))->first();
-        $token = JWTAuth::fromUser($admin);       
-        $response = $this->json('POST',route('admin.doctors.store'), $body,array('Authorization' => 'Bearer'. $token));
+        $response = $this->actingAs($admin,'admin')->json('POST',route('admin.doctors.store'), $body);
         
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
-        
-        $doctor = Doctor::where('mobile',$body['mobile'])->first();
-        $doctor->doctorWeekDays()->forceDelete();
-        $doctor->services()->detach();
-        $doctor->forceDelete();
     }
 }

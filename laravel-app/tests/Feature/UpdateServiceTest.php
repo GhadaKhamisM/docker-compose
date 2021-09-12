@@ -6,10 +6,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Http\Response;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Service;
 use App\Models\Admin;
-use App\Models\ServiceTranslation;
 use Faker\Factory as Faker;
 use App;
 
@@ -22,18 +20,14 @@ class UpdateServiceTest extends TestCase
      */
     public function testUpdateServiceWithoutAuthentication()
     {
-        $service = factory(Service::class)->create();
-        $serviceTranslation = factory(ServiceTranslation::class)->make();
-        $service->serviceTranslations()->save($serviceTranslation);
+        $service = factory(Service::class)->state('serviceTranslations')->create();
         $body = array('service_translations' => array(array(
-            'name' => $serviceTranslation->name,
-            'description' => $serviceTranslation->description,
-            'locale' => $serviceTranslation->locale
+            'name' => $service->serviceTranslations()->first()->name,
+            'description' => $service->serviceTranslations()->first()->description,
+            'locale' => $service->serviceTranslations()->first()->locale
         )));
-        $response = $this->json('PUT',route('admin.services.update', ['service' => $service->id]), $body,array('Authorization' => ''));
+        $response = $this->put(route('admin.services.update', ['service' => $service->id]), $body);
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-        $service->serviceTranslations()->forceDelete();
-        $service->forceDelete();
     }
 
     /**
@@ -44,16 +38,11 @@ class UpdateServiceTest extends TestCase
     public function testUpdateServiceWithoutBody()
     {
         $body = array();
-        $service = factory(Service::class)->create();
-        $serviceTranslation = factory(ServiceTranslation::class)->make();
-        $service->serviceTranslations()->save($serviceTranslation); 
+        $service = factory(Service::class)->state('serviceTranslations')->create();
         $admin = Admin::where('username', config('admin.SUPPER_ADMIN_USERNAME'))->first();
-        $token = JWTAuth::fromUser($admin);       
-        $response = $this->json('PUT',route('admin.services.update',['service' => $service->id]), $body,array('Authorization' => 'Bearer'. $token));
+        $response = $this->actingAs($admin,'admin')->json('PUT',route('admin.services.update',['service' => $service->id]), $body);
         
         $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
-        $service->serviceTranslations()->forceDelete();
-        $service->forceDelete();
     }
 
     /**
@@ -64,20 +53,15 @@ class UpdateServiceTest extends TestCase
     public function testUpdateServiceSuccess()
     {
         $faker = Faker::create();
-        $service = factory(Service::class)->create();
-        $serviceTranslation = factory(ServiceTranslation::class)->make();
-        $service->serviceTranslations()->save($serviceTranslation);
+        $service = factory(Service::class)->state('serviceTranslations')->create();
         $body = array('service_translations' => array(array(
             'name' => $faker->name(),
             'description' => $faker->text(),
             'locale' => App::getlocale()
         )));
         $admin = Admin::where('username', config('admin.SUPPER_ADMIN_USERNAME'))->first();
-        $token = JWTAuth::fromUser($admin);       
-        $response = $this->json('PUT',route('admin.services.update',['service' => $service->id]), $body,array('Authorization' => 'Bearer'. $token));
+        $response = $this->actingAs($admin,'admin')->json('PUT',route('admin.services.update',['service' => $service->id]), $body);
         
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $service->serviceTranslations()->forceDelete();
-        $service->forceDelete();
     }
 }

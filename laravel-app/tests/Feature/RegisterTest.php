@@ -12,7 +12,6 @@ use Hash;
 
 class RegisterTest extends TestCase
 {
-
      /**
      * A patien register faild test without body.
      *

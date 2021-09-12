@@ -3,6 +3,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Models\Doctor;
+use App\Models\DoctorWeekDay;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 
@@ -23,8 +24,12 @@ $factory->define(Doctor::class, function (Faker $faker) {
         'name_english' => $faker->name(),
         'mobile' => $faker->numerify('###########'),
         'password' => 'secret', // password,
-        'photo' => $faker->image('public/uploads/doctors',640,480, null, true),
+        'photo' => $faker->image(),
         'time_slot' => $faker->numberBetween(0, 60),
         'email' => $faker->email(),
     ];
+})->state(Doctor::class, 'doctorWeekDays', [])
+->afterCreatingState(Doctor::class, 'doctorWeekDays', function ($doctor, $faker) {
+    $doctorWeekDays = factory(DoctorWeekDay::class, 2)->make();
+    $doctor->doctorWeekDays()->saveMany($doctorWeekDays);
 });
