@@ -10,6 +10,7 @@ use App\Models\Service;
 use App\Http\Resources\ServiceResource;
 use App\Http\Filters\ServiceFilter;
 use Illuminate\Http\Response;
+use Lang;
 
 class ServiceController extends Controller
 {
@@ -31,7 +32,7 @@ class ServiceController extends Controller
 
     public function store(StoreServiceRequest $request){
         $service = $this->serviceService->create($request->validated());
-        return new ServiceResource($service);
+        return response()->json(['message' => Lang::get('messages.services.success.created')] , Response::HTTP_CREATED);
     }
 
     public function update(UpdateServiceRequest $request,Service $service){
@@ -40,6 +41,7 @@ class ServiceController extends Controller
     }
 
     public function destroy(Service $service){
-        return $this->serviceService->delete($service);
+        $this->serviceService->delete($service);
+        return response()->json(['message' => Lang::get('messages.services.success.delete')] , Response::HTTP_OK);
     }
 }

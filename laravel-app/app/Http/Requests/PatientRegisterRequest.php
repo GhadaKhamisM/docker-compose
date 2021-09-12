@@ -25,7 +25,7 @@ class PatientRegisterRequest extends FormRequest
     {
         return [
             'name' => 'required|min:3|max:150|unique:patients',
-            'mobile' => 'required|numeric|unique:patients',
+            'mobile' => 'required|numeric|unique:patients,mobile,NULL,id,deleted_at,NULL',
             'password' => 'required',
         ];
     }

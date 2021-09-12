@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::name('doctor.')->middleware(['jwt.guard:doctor','auth.jwt','auth.check:doctor','booking.access'])->prefix('v1')->group(function () {    
-    Route::get('bookings', 'BookingController@index')->name('bookings.list');
+    Route::get('bookings', 'BookingController@doctorBooking')->name('bookings.list');
     Route::get('bookings/{booking}', 'BookingController@show')->name('bookings.show');
     
     Route::middleware(['booking.status'])->group(function () {

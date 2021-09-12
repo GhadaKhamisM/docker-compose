@@ -21,23 +21,11 @@ class BookingRepository extends BaseRepository
         return $booking;
     }
 
-    public function acceptBooking(int $bookingId){
+    public function accept(int $bookingId){
         $this->findBy('id',$bookingId)->update(['status_id' => config('statuses.accepted')]);
     }
 
-    public function cancelBooking(int $bookingId){
+    public function cancel(int $bookingId){
         $this->findBy('id',$bookingId)->update(['status_id' => config('statuses.canceled')]);
-    }
-
-    public function getPatientBooking(BookingFilter $filter, int $patientId){
-        return $this->model->filter($filter)
-            ->where('patient_id',$patientId)
-            ->get();
-    }
-
-    public function getDoctorBooking(BookingFilter $filter, int $doctorId){
-        return $this->model->filter($filter)
-            ->where('doctor_id',$doctorId)
-            ->get();
     }
 }

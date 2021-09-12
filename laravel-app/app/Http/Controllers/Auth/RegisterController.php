@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\PatientRegisterRequest;
 use App\Http\Services\RegisterService;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;
 
 class RegisterController extends Controller
 {
@@ -17,6 +18,7 @@ class RegisterController extends Controller
     }
 
     public function patientRegistration(PatientRegisterRequest $request){
-        return $this->registerService->patientRegistration($request->validated());
+        $token =  $this->registerService->patientRegistration($request->validated());
+        return response()->json(['token' => $token] , Response::HTTP_OK);
     }
 }

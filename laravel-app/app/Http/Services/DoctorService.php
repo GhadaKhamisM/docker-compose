@@ -39,7 +39,6 @@ class DoctorService
 
     public function delete(Doctor $doctor){
         $this->doctorRepository->delete($doctor->id);
-        return response()->json(['messages' => Lang::get('messages.doctors.success.delete')] , Response::HTTP_OK);
     }
 
     public function getDoctorAvailableDates(Doctor $doctor, array $data)
