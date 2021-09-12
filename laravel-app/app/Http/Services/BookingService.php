@@ -7,7 +7,6 @@ use App\Repositories\BookingRepository;
 use App\Repositories\DoctorRepository;
 use App\Http\Filters\BookingFilter;
 use App\Models\Booking;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Carbon\Carbon;
 use Lang;
 
@@ -31,22 +30,15 @@ class BookingService
     }
 
     public function getAll(BookingFilter $filter){
-        $user = JWTAuth::parseToken()->authenticate();
-        $guaed = config('auth.defaults.guard');
-        if($guaed == 'patient') {
-            return $this->bookingRepository->getPatientBooking($filter,$user->id);
-        }
-        return $this->bookingRepository->getDoctorBooking($filter, $user->id);
+        return $this->bookingRepository->getAll($filter);
     }
 
-    public function acceptBooking(Booking $booking){
-        $this->bookingRepository->acceptBooking($booking->id);
-        return response()->json(['messages' => Lang::get('messages.booking.success.accept')] , Response::HTTP_OK);
+    public function accept(Booking $booking){
+        $this->bookingRepository->accept($booking->id);
     }
 
-    public function cancelBooking(Booking $booking){
-        $this->bookingRepository->cancelBooking($booking->id);
-        return response()->json(['messages' => Lang::get('messages.booking.success.cancel')] , Response::HTTP_OK);
+    public function cancel(Booking $booking){
+        $this->bookingRepository->cancel($booking->id);
     }
 
     public function validateBookingAvailable($data){

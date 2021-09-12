@@ -4,7 +4,6 @@ namespace App\Http\Services;
 
 use Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Http\Response;
 use App\Repositories\PatientRepository;
 
 class RegisterService
@@ -25,6 +24,6 @@ class RegisterService
     public function patientRegistration(array $patientData){
         $patient = $this->patientRepository->create($patientData);
         $token = JWTAuth::fromUser($patient);
-        return response()->json(['token' => $token] , Response::HTTP_OK);
+        return $token;
     }
 }

@@ -17,6 +17,22 @@ class BookingFilter extends QueryFilter
     }
 
     /**
+     * @param string $patientId
+     */
+    public function patient_id(string $patientId)
+    {
+        $this->builder->where('patient_id',$patientId);
+    }
+    
+    /**
+     * @param string $doctorId
+     */
+    public function doctor_id(string $doctorId)
+    {
+        $this->builder->where('doctor_id',$doctorId);
+    }
+    
+    /**
      * Sort the services by the given order and field.
      *
      * @param  array  $value

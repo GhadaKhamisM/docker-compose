@@ -14,8 +14,6 @@ trait PaginationFilter
     public function pagination(string $value)
     {
         list($pageSize,$pageNumber) = explode(',', $value);
-        $count = count($this->builder->get());
-        $skip  = ($pageNumber - 1) * $pageSize;
-        $this->builder->skip($skip)->take($pageSize);
+        $this->builder->paginate($pageSize,['*'],'page',$pageNumber);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Http\Requests\AdminLoginRequest;
 use App\Http\Requests\PatientLoginRequest;
 use App\Http\Requests\DoctorLoginRequest;
@@ -19,14 +20,17 @@ class LoginController extends Controller
     }
 
     public function adminLogin(AdminLoginRequest $request){
-        return $this->loginService->adminLogin($request->validated());
+        $token = $this->loginService->adminLogin($request->validated());
+        return response()->json(['token' => $token] , Response::HTTP_OK);
     }
 
     public function patientLogin(PatientLoginRequest $request){
-        return $this->loginService->patientLogin($request->validated());
+        $token = $this->loginService->patientLogin($request->validated());
+        return response()->json(['token' => $token] , Response::HTTP_OK);
     }
 
     public function doctorLogin(DoctorLoginRequest $request){
-        return $this->loginService->doctorLogin($request->validated());
+        $token = $this->loginService->doctorLogin($request->validated());
+        return response()->json(['token' => $token] , Response::HTTP_OK);
     }
 }

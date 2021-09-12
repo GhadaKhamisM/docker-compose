@@ -43,7 +43,7 @@ class LoginService
         $admin = $this->adminRepository->findBy('username',$requestData['username']);
         if($admin && $this->validateCorrectPassword($requestData['password'],$admin->password)){
             $token = JWTAuth::fromUser($admin);
-            return response()->json(['token' => $token] , Response::HTTP_OK);
+            return $token;
         }
         abort(Response::HTTP_UNAUTHORIZED,Lang::get('messages.login.errors.wrong_data'));
     }
@@ -58,7 +58,7 @@ class LoginService
         $patient = $this->patientRepository->findBy('mobile',$requestData['mobile']);
         if($patient && $this->validateCorrectPassword($requestData['password'],$patient->password)){
             $token = JWTAuth::fromUser($patient);
-            return response()->json(['token' => $token] , Response::HTTP_OK);
+            return $token;
         }
         abort(Response::HTTP_UNAUTHORIZED,Lang::get('messages.login.errors.wrong_data'));
     }
@@ -73,7 +73,7 @@ class LoginService
         $doctor = $this->doctorRepository->findBy('mobile',$requestData['mobile']);
         if($doctor && $this->validateCorrectPassword($requestData['password'],$doctor->password)){
             $token = JWTAuth::fromUser($doctor);
-            return response()->json(['token' => $token] , Response::HTTP_OK);
+            return $token;
         }
         abort(Response::HTTP_UNAUTHORIZED,Lang::get('messages.login.errors.wrong_data'));
     }

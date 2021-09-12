@@ -17,12 +17,14 @@ return [
             'delete' => 'Can\'t delete this service, there are doctors related with it'
         ],
         'success' => [
-            'delete' => 'Service deleted successfully'
+            'delete' => 'Service deleted successfully',
+            'created' => 'Service saved successfully',
         ]
     ],
     'doctors' => [
         'success' => [
-            'delete' => 'Doctor deleted successfully'
+            'delete' => 'Doctor deleted successfully',
+            'created' => 'Doctor saved successfully',
         ]
     ],
     'login' => [
@@ -37,6 +39,7 @@ return [
         'success' => [
             'accept' => 'Booking successfully accepted',
             'cancel' => 'Booking successfully canceled',
+            'created' => 'Booking saved successfully',
         ],
         'errors' => [
             'status' => 'Booking status can\'t  changed',

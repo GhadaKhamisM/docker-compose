@@ -12,6 +12,7 @@ use App\Http\Resources\DoctorResource;
 use App\Http\Filters\DoctorFilter;
 use Illuminate\Http\Response;
 use App\Jobs\SendEmailJob;
+use Lang;
 
 class DoctorController extends Controller
 {
@@ -34,7 +35,7 @@ class DoctorController extends Controller
     public function store(StoreDoctorRequest $request){
         $doctor = $this->doctorService->create($request->validated());
         dispatch(new SendEmailJob($doctor,$request->password));
-        return new DoctorResource($doctor);
+        return response()->json(['message' => Lang::get('messages.doctors.success.created')] , Response::HTTP_CREATED);
     }
 
     public function update(UpdateDoctorRequest $request,Doctor $doctor){
@@ -43,7 +44,8 @@ class DoctorController extends Controller
     }
 
     public function destroy(Doctor $doctor){
-        return $this->doctorService->delete($doctor);
+        $this->doctorService->delete($doctor);
+        return response()->json(['messages' => Lang::get('messages.doctors.success.delete')] , Response::HTTP_OK);
     }
 
     public function getDoctorAvailableDates(DoctorDaysRequest $request,Doctor $doctor){

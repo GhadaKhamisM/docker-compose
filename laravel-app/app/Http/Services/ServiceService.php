@@ -35,6 +35,5 @@ class ServiceService
             abort(Response::HTTP_METHOD_NOT_ALLOWED, Lang::get('messages.services.errors.delete'));
         }
         $this->serviceRepository->delete($service->id);
-        return response()->json(['message' => Lang::get('messages.services.success.delete')] , Response::HTTP_OK);
     }
 }
