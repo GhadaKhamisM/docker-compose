@@ -6,10 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Http\Response;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Models\Doctor;
 use App\Models\Admin;
-use App\Models\DoctorTranslation;
 use Faker\Factory as Faker;
 use App;
 
@@ -34,8 +31,7 @@ class ListDoctorTest extends TestCase
     public function testListDoctorsSuccess()
     {
         $admin = Admin::where('username', config('admin.SUPPER_ADMIN_USERNAME'))->first();
-        $token = JWTAuth::fromUser($admin);       
-        $response = $this->json('GET',route('admin.doctors.index'), array(),array('Authorization' => 'Bearer'. $token));
+        $response = $this->actingAs($admin,'admin')->json('GET',route('admin.doctors.index'), array());
         
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }

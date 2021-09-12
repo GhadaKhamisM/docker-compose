@@ -174,12 +174,11 @@ class LoginTest extends TestCase
      */
     public function testDoctorSuccessLogin()
     {
-        $doctor = factory(Doctor::class)->create();
+        $doctor = factory(Doctor::class)->state('doctorWeekDays')->create();
         $body = array('mobile' => $doctor->mobile,
             'password' => 'secret'); 
         $response = $this->json('POST',route('auth.doctor-login'), $body);
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $doctor->forceDelete();
     }
 }

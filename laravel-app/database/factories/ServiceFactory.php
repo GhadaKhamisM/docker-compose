@@ -3,6 +3,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Models\Service;
+use App\Models\ServiceTranslation;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 
@@ -19,4 +20,8 @@ use Illuminate\Support\Str;
 
 $factory->define(Service::class, function (Faker $faker) {
     return array();
+})->state(Service::class, 'serviceTranslations', [])
+->afterCreatingState(Service::class, 'serviceTranslations', function ($service, $faker) {
+    $serviceTranslations = factory(ServiceTranslation::class, 1)->make();
+    $service->serviceTranslations()->saveMany($serviceTranslations);
 });

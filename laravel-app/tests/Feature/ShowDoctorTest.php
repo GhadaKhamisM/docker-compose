@@ -6,11 +6,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Http\Response;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Doctor;
-use App\Models\DoctorWeekDay;
 use App\Models\Admin;
-use App\Models\DoctorTranslation;
 use Faker\Factory as Faker;
 use App;
 
@@ -23,13 +20,9 @@ class ShowDoctorTest extends TestCase
      */
     public function testShowDoctorWithoutAuthentication()
     {
-        $doctor = factory(Doctor::class)->create();
-        $doctorWeekDay = factory(DoctorWeekDay::class)->make();
-        $doctor->doctorWeekDays()->save($doctorWeekDay);
-        $response = $this->json('GET',route('admin.doctors.show', ['doctor' => $doctor->id]),array(),array('Authorization' => ''));
+        $doctor = factory(Doctor::class)->state('doctorWeekDays')->create();
+        $response = $this->json('GET',route('admin.doctors.show', ['doctor' => $doctor->id]),array());
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-        $doctor->doctorWeekDays()->forceDelete();
-        $doctor->forceDelete();
     }
 
     /**
@@ -40,8 +33,7 @@ class ShowDoctorTest extends TestCase
     public function testShowDoctorNotExist()
     {
         $admin = Admin::where('username', config('admin.SUPPER_ADMIN_USERNAME'))->first();
-        $token = JWTAuth::fromUser($admin);       
-        $response = $this->json('GET',route('admin.doctors.show',['doctor' => 0]), array(),array('Authorization' => 'Bearer'. $token));
+        $response = $this->actingAs($admin,'admin')->json('GET',route('admin.doctors.show',['doctor' => 0]), array());
         
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
@@ -53,15 +45,10 @@ class ShowDoctorTest extends TestCase
      */
     public function testShowDoctorSuccess()
     {
-        $doctor = factory(Doctor::class)->create();
-        $doctorWeekDay = factory(DoctorWeekDay::class)->make();
-        $doctor->doctorWeekDays()->save($doctorWeekDay);
+        $doctor = factory(Doctor::class)->state('doctorWeekDays')->create();
         $admin = Admin::where('username', config('admin.SUPPER_ADMIN_USERNAME'))->first();
-        $token = JWTAuth::fromUser($admin);       
-        $response = $this->json('GET',route('admin.doctors.show',['doctor' => $doctor->id]), array(),array('Authorization' => 'Bearer'. $token));
+        $response = $this->actingAs($admin,'admin')->json('GET',route('admin.doctors.show',['doctor' => $doctor->id]), array());
         
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $doctor->doctorWeekDays()->forceDelete();
-        $doctor->forceDelete();
     }
 }
