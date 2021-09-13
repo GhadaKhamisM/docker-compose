@@ -52,6 +52,15 @@ return [
             'status' => 'Booking status can\'t  changed',
             'not_available' => 'Booking is not available at this time'
         ]
+    ],
+    'reviews' => [
+        'success' => [
+            'created' => 'Review saved successfully',
+        ], 
+        'errors' => [
+            'created' => 'You can\'t add review',
+            'exist' => 'You already add review',
+        ]
     ]
 
 ];
