@@ -62,6 +62,11 @@ class Doctor extends Authenticatable implements JWTSubject
         return $this->hasMany(Booking::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
     protected static function boot()
     {
         parent::boot();

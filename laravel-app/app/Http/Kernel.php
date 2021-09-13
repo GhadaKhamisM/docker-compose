@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'jwt.guard' => \App\Http\Middleware\ChangeDefaultGuard::class,
         'booking.access' => \App\Http\Middleware\CheckBookingAccess::class,
         'booking.status' =>  \App\Http\Middleware\CheckBookingStatus::class,
+        'review.check' => \App\Http\Middleware\CheckCanReview::class,
     ];
 }
