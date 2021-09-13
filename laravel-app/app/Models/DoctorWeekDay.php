@@ -10,7 +10,7 @@ class DoctorWeekDay extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'doctor_id', 'week_day_id', 'start_hour', 'to_hour',
+        'doctor_id', 'week_day_id', 'start_hour', 'to_hour'
     ];
 
     public function doctor()
@@ -21,5 +21,9 @@ class DoctorWeekDay extends Model
     public function weekDay()
     {
         return $this->belongsTo(WeekDay::class);
+    }
+
+    public function bookings(){
+        return $this->hasMany(Booking::class);
     }
 }

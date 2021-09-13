@@ -14,6 +14,8 @@ use Lang;
 class DoctorService
 {
     use UploadFile;
+    use ValidateBooking;
+
     private $doctorRepository, $uploadService, $weekDayRepository;
 
     public function __construct(DoctorRepository $doctorRepository, WeekDayRepository $weekDayRepository)
@@ -34,30 +36,46 @@ class DoctorService
     public function update(Doctor $doctor,array $data){
         $data['photo'] = $this->uploadFile($data['photo'],'/doctors');
         $this->doctorRepository->update($doctor,$data);
-        return $this->doctorRepository->findBy('id',$doctor->id);
     }
 
     public function delete(Doctor $doctor){
         $this->doctorRepository->delete($doctor->id);
     }
 
-    public function getDoctorAvailableDates(Doctor $doctor, array $data)
+    public function getDoctorAvailableTimes(Doctor $doctor, array $data)
     {
-        if(isset($data['week_day_id'])){
-            $today =  Carbon::now();
-            $weekDay = $this->weekDayRepository->findBy('id',$data['week_day_id']);
-            $result['visit_date'] = $this->getNearestAvailableDate($today, $weekDay->day_index);
-            return $result;
-        } 
+        $visitDate = Carbon::parse($data['visit_date']);
+        $doctorWeekDays = $this->getDoctorWeekDays($doctor,$visitDate,$data);
 
-        $result['visit_date'] = Carbon::now()->format('Y-m-d');
-        return $result;
+        if(!$doctorWeekDays->count()){
+            abort(Response::HTTP_NOT_FOUND, Lang::get('messages.doctors.errors.date'));
+        }
+
+        $availableTimes = $this->getAvailableTimes($doctorWeekDays, $doctor, $data['visit_date']);
+
+        if(empty($availableTimes)) {
+            abort(Response::HTTP_BAD_REQUEST, Lang::get('messages.doctors.errors.booking'));
+        }
+        return $availableTimes;
     }
 
-    private function getNearestAvailableDate($date, int $dayIndex){
-        if($date->dayOfWeek == $dayIndex) {
-            return  $date->format('Y-m-d');
+    public function getDoctorWeekDays(Doctor $doctor,$visitDate,Array $data){
+        return $doctor->doctorWeekDays()
+            ->whereHas('weekDay', function($query) use ($visitDate){
+                $query->where('day_index', $visitDate->dayOfWeek);
+            })->with(['bookings' => function ($query) use ($data){
+                $query->whereDate('visit_date',$data['visit_date']);
+            }])->get();
+    }
+
+    public function getAvailableTimes($doctorWeekDays, Doctor $doctor, string $visitDate){
+        $availableTimes = array();
+        foreach ($doctorWeekDays as $key => $doctorWeekDay) {
+            $canBooking = $this->canBooking($doctor,$doctorWeekDay,$visitDate);
+            if($canBooking){
+                $availableTimes[] = $doctorWeekDay;
+            }
         }
-        return $this->getNearestAvailableDate($date->addDay(),$dayIndex);
+        return $availableTimes;
     }
 }

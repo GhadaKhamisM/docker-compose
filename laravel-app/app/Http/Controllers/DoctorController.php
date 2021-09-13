@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateDoctorRequest;
 use App\Http\Requests\DoctorDaysRequest;
 use App\Models\Doctor;
 use App\Http\Resources\DoctorResource;
+use App\Http\Resources\DoctorWeekDayResource;
 use App\Http\Filters\DoctorFilter;
 use Illuminate\Http\Response;
 use App\Jobs\SendEmailJob;
@@ -39,8 +40,8 @@ class DoctorController extends Controller
     }
 
     public function update(UpdateDoctorRequest $request,Doctor $doctor){
-        $doctor = $this->doctorService->update( $doctor,$request->validated());
-        return new DoctorResource($doctor);
+        $this->doctorService->update( $doctor,$request->validated());
+        return response()->json(['message' => Lang::get('messages.doctors.success.updated')] , Response::HTTP_OK);
     }
 
     public function destroy(Doctor $doctor){
@@ -48,7 +49,8 @@ class DoctorController extends Controller
         return response()->json(['messages' => Lang::get('messages.doctors.success.delete')] , Response::HTTP_OK);
     }
 
-    public function getDoctorAvailableDates(DoctorDaysRequest $request,Doctor $doctor){
-        return $this->doctorService->getDoctorAvailableDates($doctor, $request->validated());
+    public function getDoctorAvailableTimes(DoctorDaysRequest $request,Doctor $doctor){
+        $doctorTimes = $this->doctorService->getDoctorAvailableTimes($doctor, $request->validated());
+        return DoctorWeekDayResource::collection($doctorTimes);
     }
 }

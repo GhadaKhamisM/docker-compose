@@ -27,7 +27,6 @@ class ServiceService
 
     public function update(Service $service,array $data){
         $this->serviceRepository->update($service,$data);
-        return $this->serviceRepository->findBy('id',$service->id);
     }
 
     public function delete(Service $service){

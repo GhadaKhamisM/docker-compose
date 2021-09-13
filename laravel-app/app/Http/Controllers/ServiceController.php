@@ -36,8 +36,8 @@ class ServiceController extends Controller
     }
 
     public function update(UpdateServiceRequest $request,Service $service){
-        $service = $this->serviceService->update( $service,$request->validated());
-        return new ServiceResource($service);
+        $this->serviceService->update( $service,$request->validated());
+        return response()->json(['message' => Lang::get('messages.services.success.updated')] , Response::HTTP_OK);
     }
 
     public function destroy(Service $service){

@@ -23,7 +23,8 @@ class DoctorRepository extends BaseRepository
         unset($doctorData['services']);
         unset($doctorData['doctor_week_days']);
         $this->findBy('id',$doctor->id)->update($doctorData);
-        $this->updateDoctorRelations($doctor,$data);
+        $doctor->services()->sync($data['services']);
+        $this->updateDoctorWeekDays($doctor,$data['doctor_week_days']);
     }
 
     public function delete(int $id){
@@ -35,9 +36,26 @@ class DoctorRepository extends BaseRepository
         $doctor->doctorWeekDays()->createMany($data['doctor_week_days']);
     }
 
-    public function updateDoctorRelations(Doctor $doctor,Array $data){
-        $doctor->services()->sync($data['services']);
-        $doctor->doctorWeekDays()->delete();
-        $doctor->doctorWeekDays()->createMany($data['doctor_week_days']);
+    public function updateDoctorWeekDays(Doctor $doctor,Array $data){
+        $OldDoctorWeekDaysIds = array_column($doctor->doctorWeekDays->toArray(),'id');
+        $updateWeekDaysIds = array_column($data,'id');
+
+        // delete
+        $deleteWeekDaysIds = array_diff($OldDoctorWeekDaysIds,$updateWeekDaysIds);
+        $doctor->doctorWeekDays()->whereIn('id',$deleteWeekDaysIds)->delete();
+
+        // update
+        $updateDoctorWeekDays = array_filter($data, function ($doctorWeekDay) { return isset($doctorWeekDay['id']); });
+        if(!empty($updateDoctorWeekDays)){
+            foreach ($updateDoctorWeekDays as $key => $doctorWeekDay) {
+                $doctor->doctorWeekDays()->where('id',$doctorWeekDay['id'])->update($doctorWeekDay);
+            }
+        }
+
+        // create
+        $createdData = array_filter($data, function ($doctorWeekDay) {return !isset($doctorWeekDay['id']);});
+        if(!empty($createdData)){
+            $doctor->doctorWeekDays()->createMany($createdData);
+        }
     }
 }

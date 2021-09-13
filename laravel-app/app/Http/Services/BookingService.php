@@ -12,6 +12,8 @@ use Lang;
 
 class BookingService
 {
+    use ValidateBooking;
+
     private $bookingRepository, $doctorRepository;
 
     public function __construct(BookingRepository $bookingRepository,
@@ -22,8 +24,17 @@ class BookingService
     }
 
     public function create(array $data){
-        $bookingAvailable = $this->validateBookingAvailable($data);
-        if($bookingAvailable){
+        $doctor = $this->doctorRepository->findBy('id',$data['doctor_id'])->load('doctorWeekDays.bookings');
+        $doctorWorkingDay = $doctor->doctorWeekDays()->where('id',$data['doctor_week_day_id'])->first();
+        $canBooking = $this->canBooking($doctor,$doctorWorkingDay,$data['visit_date']);
+
+        if($canBooking){
+            $lastBooking = $doctorWorkingDay->bookings()->whereDate('visit_date',$data['visit_date'])->orderBy('id','desc')->first();            
+            $startHour = $lastBooking? $lastBooking->to_hour : $doctorWorkingDay->start_hour;
+            $toHour = Carbon::parse($data['visit_date'] .' '. $startHour)->addMinutes($doctor->time_slot);
+            $data = array_merge($data,array('start_hour' => $startHour,
+                    'to_hour' => $toHour->format('H:i'), 'time_slot' => $doctor->time_slot)); 
+
             return $this->bookingRepository->create($data);
         }
         abort(Response::HTTP_UNPROCESSABLE_ENTITY,Lang::get('messages.booking.errors.not_available'));
@@ -39,21 +50,5 @@ class BookingService
 
     public function cancel(Booking $booking){
         $this->bookingRepository->cancel($booking->id);
-    }
-
-    public function validateBookingAvailable($data){
-        $doctor = $this->doctorRepository->findBy('id',$data['doctor_id']);
-        $doctorBockingsCount = $doctor->bookings()->whereDate('visit_date',$data['visit_date'])
-            ->where('doctor_week_day_id',$data['doctor_week_day_id'])->count();
-        $doctorWorkingDay = $doctor->doctorWeekDays()->where('id',$data['doctor_week_day_id'])->first();
-        $numberOfBookings = $this->getBookingsNumberAtWorkingDuration($doctor->time_slot,$doctorWorkingDay,$data['visit_date']);
-        return $numberOfBookings > $doctorBockingsCount;
-    }
-
-    public function getBookingsNumberAtWorkingDuration($timeSlot,$doctorWorkingDay,$visitDate){
-        $periodStartHour = Carbon::parse($visitDate .' '. $doctorWorkingDay->start_hour);
-        $periodEndHour = Carbon::parse($visitDate .' '. $doctorWorkingDay->to_hour);
-        $durationOfPeriod = $periodEndHour->diffInMinutes($periodStartHour);
-        return $durationOfPeriod / $timeSlot;
     }
 }
