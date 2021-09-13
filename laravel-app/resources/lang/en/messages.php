@@ -19,12 +19,19 @@ return [
         'success' => [
             'delete' => 'Service deleted successfully',
             'created' => 'Service saved successfully',
+            'updated' => 'Service updated successfully'
+
         ]
     ],
     'doctors' => [
         'success' => [
             'delete' => 'Doctor deleted successfully',
             'created' => 'Doctor saved successfully',
+            'updated' => 'Doctor updated successfully'
+        ],
+        'errors' => [
+            'date' => 'This date not available',
+            'booking' => 'There is not times available in this date',
         ]
     ],
     'login' => [

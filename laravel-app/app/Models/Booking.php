@@ -12,7 +12,8 @@ class Booking extends Model
     use Filterable;
 
     protected $fillable = [
-        'patient_id', 'doctor_id', 'status_id', 'visit_date', 'doctor_week_day_id'
+        'patient_id', 'doctor_id', 'status_id', 'visit_date', 'doctor_week_day_id',
+        'start_hour', 'to_hour', 'time_slot',
     ];
 
     protected $hidden = [

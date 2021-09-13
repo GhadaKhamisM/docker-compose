@@ -34,7 +34,7 @@ class StoreDoctorRequest extends FormRequest
             'services' => 'required|array',
             'services.*.service_id' => 'required|distinct|exists:services,id',
             'doctor_week_days' => 'required|array',
-            'doctor_week_days.*.week_day_id' => 'required|distinct|exists:week_days,id',
+            'doctor_week_days.*.week_day_id' => 'required|exists:week_days,id',
             'doctor_week_days.*.start_hour' => 'required|date_format:H:i',
             'doctor_week_days.*.to_hour' => 'required|date_format:H:i|after:doctor_week_days.*.start_hour'
         ];

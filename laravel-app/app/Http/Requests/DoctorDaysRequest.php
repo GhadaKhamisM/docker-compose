@@ -24,7 +24,7 @@ class DoctorDaysRequest extends FormRequest
     public function rules()
     {
         return [
-            'week_day_id' => 'sometimes|exists:doctor_week_days,week_day_id,doctor_id,'.$this->doctor->id.',deleted_at,NULL'
+            'visit_date' => 'required|date|after_or_equal:today|date_format:Y-m-d',
         ];
     }
 }

@@ -16,6 +16,9 @@ class BookingResource extends JsonResource
     {
         return array(
             'id' => $this->id,
+            'start_hour' => $this->start_hour,
+            'to_hour' => $this->to_hour,
+            'time_slot' => $this->time_slot,
             'status' =>  new StatusResource($this->status),
             'visit_date' => $this->visit_date,
             'doctor_week_day' => new DoctorWeekDayResource($this->doctorWeekDay),
