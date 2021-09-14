@@ -15,9 +15,9 @@ class CreateReviewsTable extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('patient_id')->unsigned();
+            $table->bigInteger('patient_id')->unsigned()->index();
             $table->foreign('patient_id')->references('id')->on('patients');
-            $table->bigInteger('doctor_id')->unsigned();
+            $table->bigInteger('doctor_id')->unsigned()->index();
             $table->foreign('doctor_id')->references('id')->on('doctors');
             $table->integer('rating')->unsigned()->index();
             $table->timestamp('date')->nullable();

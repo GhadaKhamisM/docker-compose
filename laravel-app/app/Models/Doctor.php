@@ -67,6 +67,11 @@ class Doctor extends Authenticatable implements JWTSubject
         return $this->hasMany(Review::class);
     }
 
+    public function scopeRating()
+    {
+        return $this->reviews->avg('rating');
+    }
+
     protected static function boot()
     {
         parent::boot();
