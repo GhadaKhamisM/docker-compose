@@ -65,6 +65,7 @@ class LoginTest extends TestCase
         $response = $this->json('POST',route('auth.admin-login'), $body);
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertStringContainsString('token',$response->getContent());
     }
 
     /**
@@ -122,7 +123,7 @@ class LoginTest extends TestCase
         $response = $this->json('POST',route('auth.patient-login'), $body);
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $patient->forceDelete();
+        $this->assertStringContainsString('token',$response->getContent());
     }
 
     /**
@@ -180,5 +181,6 @@ class LoginTest extends TestCase
         $response = $this->json('POST',route('auth.doctor-login'), $body);
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertStringContainsString('token',$response->getContent());
     }
 }

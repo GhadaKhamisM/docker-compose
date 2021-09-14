@@ -50,5 +50,6 @@ class DeleteServiceTest extends TestCase
         $response = $this->actingAs($admin,'admin')->json('DELETE',route('admin.services.destroy',['service' => $service->id]), array());
         
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertSoftDeleted('services', ['id' => $service->id]);	
     }
 }

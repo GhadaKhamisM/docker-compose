@@ -80,5 +80,6 @@ class StoreServiceTest extends TestCase
         $response = $this->actingAs($admin,'admin')->json('POST',route('admin.services.store'), $body);
         
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertDatabaseHas('service_translations', ['name' => $body['service_translations'][0]['name']]);
     }
 }

@@ -65,14 +65,19 @@ class ShowBookingTest extends TestCase
         $doctor = factory(Doctor::class)->state('doctorWeekDays')->create();
         $doctorWeekDay = $doctor->doctorWeekDays()->first();
         $patient = factory(Patient::class)->create();
+        $visitDate = $this->getVisitDate(Carbon::now(),$doctorWeekDay->weekDay->day_index);
+        $startTime = Carbon::parse($visitDate. ' '.$doctorWeekDay->start_hour);
         $body = array(
             'doctor_id' => $doctor->id,
             'doctor_week_day_id' => $doctorWeekDay->id,
-            'visit_date' => $this->getVisitDate(Carbon::now(),$doctorWeekDay->weekDay->day_index)
+            'visit_date' => $visitDate,
+            'start_hour' =>  $startTime->format('H:i'),
+            'to_hour' => $startTime->addMinutes($doctor->time_slot)->format('H:i')
         );
         $response = $this->actingAs($patient,'patient')->json('POST',route('patient.bookings.store'), $body,array('Accept-Language' => App::getLocale()));
         
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertDatabaseHas('bookings', ['doctor_id' => $body['doctor_id'],'visit_date' => $body['visit_date'],'patient_id' => $patient->id]);
     }
 
     private function getVisitDate($date,$dayIndex){

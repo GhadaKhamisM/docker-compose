@@ -34,5 +34,6 @@ class ListServiceTest extends TestCase
         $response = $this->actingAs($admin,'admin')->json('GET',route('admin.services.index'), array());
         
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $response->assertJsonStructure(['data' => ['*' => ['id', 'name', 'description']]]);	
     }
 }

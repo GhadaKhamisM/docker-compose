@@ -5,6 +5,7 @@
 use App\Models\DoctorWeekDay;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,9 +19,10 @@ use Illuminate\Support\Str;
 */
 
 $factory->define(DoctorWeekDay::class, function (Faker $faker) {
+    $currentTime = Carbon::now();
     return [
         'week_day_id' => $faker->numberBetween(1, 7),
-        'start_hour' => $faker->time('H:i'),
-        'to_hour' => $faker->time('H:i'),
+        'start_hour' => $currentTime->addHours(2)->format('H:i'),
+        'to_hour' => $currentTime->addHours(2)->format('H:i'),
     ];
 });

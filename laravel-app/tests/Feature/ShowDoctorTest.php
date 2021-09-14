@@ -50,5 +50,7 @@ class ShowDoctorTest extends TestCase
         $response = $this->actingAs($admin,'admin')->json('GET',route('admin.doctors.show',['doctor' => $doctor->id]), array());
         
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $response->assertJsonStructure(['data' => ['id', 'name_arabic', 'name_english',
+            'mobile', 'time_slot', 'photo', 'email', 'rating', 'services', 'week_days']]);
     }
 }

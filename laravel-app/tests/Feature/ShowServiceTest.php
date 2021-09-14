@@ -50,5 +50,6 @@ class ShowServiceTest extends TestCase
         $response = $this->actingAs($admin,'admin')->json('GET',route('admin.services.show',['service' => $service->id]), array());
         
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $response->assertJsonStructure(['data' => ['id', 'name', 'description']]);	
     }
 }
