@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use Illuminate\Http\Response;
 use App\Repositories\BookingRepository;
 use App\Repositories\DoctorRepository;
+use App\Repositories\DoctorWeekDayRepository;
 use App\Http\Filters\BookingFilter;
 use App\Models\Booking;
 use Carbon\Carbon;
@@ -12,32 +13,31 @@ use Lang;
 
 class BookingService
 {
-    use ValidateBooking;
+    use DayInterval;
 
-    private $bookingRepository, $doctorRepository;
+    private $bookingRepository, $doctorRepository, $doctorWeekDayRepository;
 
     public function __construct(BookingRepository $bookingRepository,
-        DoctorRepository $doctorRepository)
+        DoctorRepository $doctorRepository, DoctorWeekDayRepository $doctorWeekDayRepository)
     {
         $this->bookingRepository = $bookingRepository;
         $this->doctorRepository = $doctorRepository;
+        $this->doctorWeekDayRepository = $doctorWeekDayRepository;
     }
 
     public function create(array $data){
         $doctor = $this->doctorRepository->findBy('id',$data['doctor_id'])->load('doctorWeekDays.bookings');
-        $doctorWorkingDay = $doctor->doctorWeekDays()->where('id',$data['doctor_week_day_id'])->first();
-        $canBooking = $this->canBooking($doctor,$doctorWorkingDay,$data['visit_date']);
+        $doctorWeekDay = $this->doctorWeekDayRepository->findBy('id',$data['doctor_week_day_id']);
+        $availableIntervals = $this->getAvailableTimesInInterval($doctor,$doctorWeekDay,$data['visit_date'])->toArray(); 
+        $selectedInterval = array_filter($availableIntervals,function ($availableInterval) use ($data){ 
+            return $availableInterval->is_available && $availableInterval->start_hour == $data['start_hour']
+            && $availableInterval->to_hour == $data['to_hour']; });
 
-        if($canBooking){
-            $lastBooking = $doctorWorkingDay->bookings()->whereDate('visit_date',$data['visit_date'])->orderBy('id','desc')->first();            
-            $startHour = $lastBooking? $lastBooking->to_hour : $doctorWorkingDay->start_hour;
-            $toHour = Carbon::parse($data['visit_date'] .' '. $startHour)->addMinutes($doctor->time_slot);
-            $data = array_merge($data,array('start_hour' => $startHour,
-                    'to_hour' => $toHour->format('H:i'), 'time_slot' => $doctor->time_slot)); 
-
-            return $this->bookingRepository->create($data);
+        if(empty($selectedInterval)){
+            abort(Response::HTTP_UNPROCESSABLE_ENTITY,Lang::get('messages.booking.errors.not_available'));    
         }
-        abort(Response::HTTP_UNPROCESSABLE_ENTITY,Lang::get('messages.booking.errors.not_available'));
+        $data['time_slot'] = $doctor->time_slot; 
+        return $this->bookingRepository->create($data);
     }
 
     public function getAll(BookingFilter $filter){

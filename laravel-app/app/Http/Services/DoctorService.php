@@ -5,6 +5,8 @@ namespace App\Http\Services;
 use Illuminate\Http\Response;
 use App\Repositories\DoctorRepository;
 use App\Repositories\WeekDayRepository;
+use App\Repositories\BookingRepository;
+use App\Repositories\DoctorWeekDayRepository;
 use App\Http\Filters\DoctorFilter;
 use App\Models\Doctor;
 use App\Http\Services\UploadFile;
@@ -14,14 +16,18 @@ use Lang;
 class DoctorService
 {
     use UploadFile;
-    use ValidateBooking;
+    use DayInterval;
 
-    private $doctorRepository, $uploadService, $weekDayRepository;
+    private $doctorRepository, $uploadService, $weekDayRepository,
+        $bookingRepository, $doctorWeekDayRepository;
 
-    public function __construct(DoctorRepository $doctorRepository, WeekDayRepository $weekDayRepository)
+    public function __construct(DoctorRepository $doctorRepository, WeekDayRepository $weekDayRepository,
+        BookingRepository $bookingRepository, DoctorWeekDayRepository $doctorWeekDayRepository)
     {
         $this->doctorRepository = $doctorRepository;
         $this->weekDayRepository = $weekDayRepository;
+        $this->bookingRepository = $bookingRepository;
+        $this->doctorWeekDayRepository = $doctorWeekDayRepository;
     }
 
     public function create(array $data){
@@ -47,7 +53,7 @@ class DoctorService
     public function getDoctorAvailableTimes(Doctor $doctor, array $data)
     {
         $visitDate = Carbon::parse($data['visit_date']);
-        $doctorWeekDays = $this->getDoctorWeekDays($doctor,$visitDate,$data);
+        $doctorWeekDays = $this->doctorWeekDayRepository->getDoctorWeekDays($doctor->id,$visitDate->dayOfWeek);
 
         if(!$doctorWeekDays->count()){
             abort(Response::HTTP_NOT_FOUND, Lang::get('messages.doctors.errors.date'));
@@ -61,22 +67,11 @@ class DoctorService
         return $availableTimes;
     }
 
-    public function getDoctorWeekDays(Doctor $doctor,$visitDate,Array $data){
-        return $doctor->doctorWeekDays()
-            ->whereHas('weekDay', function($query) use ($visitDate){
-                $query->where('day_index', $visitDate->dayOfWeek);
-            })->with(['bookings' => function ($query) use ($data){
-                $query->whereDate('visit_date',$data['visit_date']);
-            }])->get();
-    }
-
     public function getAvailableTimes($doctorWeekDays, Doctor $doctor, string $visitDate){
         $availableTimes = array();
         foreach ($doctorWeekDays as $key => $doctorWeekDay) {
-            $canBooking = $this->canBooking($doctor,$doctorWeekDay,$visitDate);
-            if($canBooking){
-                $availableTimes[] = $doctorWeekDay;
-            }
+            $doctorWeekDay['intervals'] = $this->getAvailableTimesInInterval($doctor,$doctorWeekDay,$visitDate); 
+            $availableTimes[] = $doctorWeekDay;
         }
         return $availableTimes;
     }

@@ -63,5 +63,6 @@ class UpdateServiceTest extends TestCase
         $response = $this->actingAs($admin,'admin')->json('PUT',route('admin.services.update',['service' => $service->id]), $body);
         
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertDatabaseHas('service_translations', ['name' => $body['service_translations'][0]['name']]);
     }
 }

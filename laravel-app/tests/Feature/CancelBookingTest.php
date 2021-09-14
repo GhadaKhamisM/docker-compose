@@ -57,5 +57,6 @@ class CancelBookingTest extends TestCase
         $response = $this->actingAs($booking->doctor,'doctor')->json('POST',route('doctor.bookings.cancel',['booking' => $booking->id]), array(),array('Accept-Language' => App::getLocale()));
         
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertDatabaseHas('bookings', ['id' => $booking->id,'status_id' => config('statuses.canceled')]);
     }
 }

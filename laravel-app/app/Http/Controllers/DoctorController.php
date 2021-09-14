@@ -10,6 +10,7 @@ use App\Http\Requests\DoctorDaysRequest;
 use App\Models\Doctor;
 use App\Http\Resources\DoctorResource;
 use App\Http\Resources\DoctorWeekDayResource;
+use App\Http\Resources\DoctorIntervalResource;
 use App\Http\Filters\DoctorFilter;
 use Illuminate\Http\Response;
 use App\Jobs\SendEmailJob;
@@ -51,6 +52,6 @@ class DoctorController extends Controller
 
     public function getDoctorAvailableTimes(DoctorDaysRequest $request,Doctor $doctor){
         $doctorTimes = $this->doctorService->getDoctorAvailableTimes($doctor, $request->validated());
-        return DoctorWeekDayResource::collection($doctorTimes);
+        return DoctorIntervalResource::collection($doctorTimes);
     }
 }

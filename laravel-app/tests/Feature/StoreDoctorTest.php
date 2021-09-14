@@ -98,5 +98,6 @@ class StoreDoctorTest extends TestCase
         $response = $this->actingAs($admin,'admin')->json('POST',route('admin.doctors.store'), $body);
         
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertDatabaseHas('doctors', ['mobile' => $body['mobile']]);
     }
 }

@@ -50,5 +50,6 @@ class DeleteDoctorTest extends TestCase
         $response = $this->actingAs($admin,'admin')->json('DELETE',route('admin.doctors.destroy',['doctor' => $doctor->id]), array());
         
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertSoftDeleted('doctors', ['id' => $doctor->id]);	
     }
 }

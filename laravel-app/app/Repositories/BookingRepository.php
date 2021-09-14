@@ -28,4 +28,12 @@ class BookingRepository extends BaseRepository
     public function cancel(int $bookingId){
         $this->findBy('id',$bookingId)->update(['status_id' => config('statuses.canceled')]);
     }
+
+    public function getOverlappingBooking($doctorId,$visitDate,$startHour,$toHour){
+        return $this->model
+            ->where('doctor_id',$doctorId)
+            ->whereDate('visit_date', $visitDate)
+            ->whereRaw('!(start_hour >= ? OR to_hour <= ?)',array($toHour,$startHour))
+            ->get();
+    }
 }
