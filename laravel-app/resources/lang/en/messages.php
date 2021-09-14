@@ -32,6 +32,7 @@ return [
         'errors' => [
             'date' => 'This date not available',
             'booking' => 'There is not times available in this date',
+            'week_days' => 'There is overlapping in times',
         ]
     ],
     'login' => [
