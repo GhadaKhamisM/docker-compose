@@ -22,6 +22,7 @@ class DoctorResource extends JsonResource
             'time_slot' => $this->time_slot,
             'photo' => $this->photo,
             'email' => $this->email,
+            'rating' => $this->rating(),
             'services' => ServiceResource::collection($this->services),
             'week_days' => DoctorWeekDayResource::collection($this->doctorWeekDays),
         );

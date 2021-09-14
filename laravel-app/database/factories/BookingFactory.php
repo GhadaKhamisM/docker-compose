@@ -23,12 +23,16 @@ use Carbon\Carbon;
 $factory->define(Booking::class, function (Faker $faker) {
     $doctor = factory(Doctor::class)->state('doctorWeekDays')->create();
     $patient = factory(Patient::class)->create();
+    $doctorWeekDay = $doctor->doctorWeekDays()->first();
     
     return [
         'status_id' => config('statuses.pending'),
         'visit_date' => Carbon::now()->format('Y-m-d'),
         'patient_id' => $patient->id,
         'doctor_id' => $doctor->id,
-        'doctor_week_day_id' => $doctor->doctorWeekDays()->first()->id,
+        'start_hour' => $doctorWeekDay->start_hour,
+        'to_hour' => Carbon::now()->addMinutes($doctor->time_slot)->format('H:i'), 
+        'time_slot' => $doctor->time_slot,
+        'doctor_week_day_id' => $doctorWeekDay->id,
     ];
 });

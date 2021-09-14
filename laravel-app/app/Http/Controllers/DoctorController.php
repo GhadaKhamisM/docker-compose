@@ -35,7 +35,7 @@ class DoctorController extends Controller
 
     public function store(StoreDoctorRequest $request){
         $doctor = $this->doctorService->create($request->validated());
-        dispatch(new SendEmailJob($doctor,$request->password));
+        SendEmailJob::dispatch($doctor,$request->password);
         return response()->json(['message' => Lang::get('messages.doctors.success.created')] , Response::HTTP_CREATED);
     }
 

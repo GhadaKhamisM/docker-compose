@@ -63,14 +63,22 @@ class ShowBookingTest extends TestCase
     {
         $faker = Faker::create();
         $doctor = factory(Doctor::class)->state('doctorWeekDays')->create();
+        $doctorWeekDay = $doctor->doctorWeekDays()->first();
         $patient = factory(Patient::class)->create();
         $body = array(
             'doctor_id' => $doctor->id,
-            'doctor_week_day_id' => $doctor->doctorWeekDays()->first()->id,
-            'visit_date' => Carbon::now()->format('Y-m-d')
+            'doctor_week_day_id' => $doctorWeekDay->id,
+            'visit_date' => $this->getVisitDate(Carbon::now(),$doctorWeekDay->weekDay->day_index)
         );
         $response = $this->actingAs($patient,'patient')->json('POST',route('patient.bookings.store'), $body,array('Accept-Language' => App::getLocale()));
         
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+    }
+
+    private function getVisitDate($date,$dayIndex){
+        if($date->dayOfWeek == $dayIndex){
+            return $date->format('Y-m-d');
+        }
+        return $this->getVisitDate($date->addDay(),$dayIndex);
     }
 }
