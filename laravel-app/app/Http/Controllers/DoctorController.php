@@ -31,7 +31,7 @@ class DoctorController extends Controller
     }
 
     public function show(Doctor $doctor){
-        return new DoctorResource($doctor);
+        return new DoctorResource($doctor->load(['services','reviews','doctorWeekDays.weekDay']));
     }
 
     public function store(StoreDoctorRequest $request){

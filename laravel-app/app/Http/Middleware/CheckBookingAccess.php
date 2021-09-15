@@ -26,7 +26,11 @@ class CheckBookingAccess
                 abort(Response::HTTP_FORBIDDEN,Lang::get('messages.login.errors.authorization'));
             }
         }
-
+        if($guaed == 'patient'){
+            $request->request->add(['patient_id' => $user->id]);
+        } else {
+            $request->request->add(['doctor_id' => $user->id]);
+        }
         return $next($request);
     }
 }

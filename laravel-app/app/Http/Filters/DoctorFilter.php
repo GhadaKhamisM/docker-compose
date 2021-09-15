@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class DoctorFilter extends QueryFilter
 {
-    use PaginationFilter;
-
     /**
      * @param string $name
      */
@@ -51,5 +49,16 @@ class DoctorFilter extends QueryFilter
     {
         list($field,$order) = explode(',', $value);
         $this->builder->orderBy($field, $order);
+    }
+
+    /**
+     * Paginate the services by the given limit and field.
+     *
+     * @param  array  $value
+     */
+    public function pagination(string $value)
+    {
+        list($pageSize,$pageNumber) = explode(',', $value);
+        $this->builder->paginate($pageSize,['*'],'page',$pageNumber);
     }
 }

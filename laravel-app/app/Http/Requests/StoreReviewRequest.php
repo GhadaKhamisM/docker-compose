@@ -26,6 +26,7 @@ class StoreReviewRequest extends FormRequest
         return [
             'rating' => 'required|numeric|min:1|max:5',
             'review' => 'sometimes',
+            'patient_id' => 'required|exists:patients,id,deleted_at,NULL'
         ];
     }
 }

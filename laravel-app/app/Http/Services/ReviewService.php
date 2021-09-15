@@ -21,6 +21,6 @@ class ReviewService
     }
 
     public function getAll(ReviewFilter $filter){
-        return $this->reviewRepository->getAll($filter);
+        return $this->reviewRepository->filterAll($filter);
     }
 }

@@ -22,21 +22,17 @@ class BookingController extends Controller
     }
 
     public function patientBooking(Request $request){
-        $user = JWTAuth::parseToken()->authenticate();
-        $request->request->add(['patient_id' => $user->id]);
         $bookings = $this->bookingService->getAll(new BookingFilter($request));
         return BookingResource::collection($bookings);
     }
 
     public function doctorBooking(Request $request){
-        $user = JWTAuth::parseToken()->authenticate();
-        $request->request->add(['doctor_id' => $user->id]);
         $bookings = $this->bookingService->getAll(new BookingFilter($request));
         return BookingResource::collection($bookings);
     }
 
     public function show(Booking $booking){
-        return new BookingResource($booking);
+        return new BookingResource($booking->load(['status','doctor.reviews','patient','doctorWeekDay.weekDay']));
     }
 
     public function store(StoreBookingRequest $request){

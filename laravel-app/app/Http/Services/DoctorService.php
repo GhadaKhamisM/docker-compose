@@ -37,7 +37,7 @@ class DoctorService
     }
 
     public function getAll(DoctorFilter $filter){
-        return $this->doctorRepository->getAll($filter);
+        return $this->doctorRepository->filterAll($filter);
     }
 
     public function update(Doctor $doctor,array $data){
@@ -47,13 +47,13 @@ class DoctorService
     }
 
     public function delete(Doctor $doctor){
-        $this->doctorRepository->delete($doctor->id);
+        $doctor->delete();
     }
 
     public function getDoctorAvailableTimes(Doctor $doctor, array $data)
     {
         $visitDate = Carbon::parse($data['visit_date']);
-        $doctorWeekDays = $this->doctorWeekDayRepository->getDoctorWeekDays($doctor->id,$visitDate->dayOfWeek);
+        $doctorWeekDays = $this->doctorWeekDayRepository->getDoctorWeekDays($doctor->id,$visitDate->dayOfWeek)->load('weekDay');
 
         if(!$doctorWeekDays->count()){
             abort(Response::HTTP_NOT_FOUND, Lang::get('messages.doctors.errors.date'));

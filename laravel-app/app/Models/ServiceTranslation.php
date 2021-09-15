@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ServiceTranslation extends Model
 {
     use SoftDeletes;
-    use LocalizeTrait;
+
+    public $timestamps = false;
 
     protected $fillable = [
         'name', 'description', 'service_id', 'locale',

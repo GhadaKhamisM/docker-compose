@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App;
 
 class ServiceResource extends JsonResource
 {
@@ -16,8 +17,8 @@ class ServiceResource extends JsonResource
     {
         return array(
             'id' => $this->id,
-            'name' => $this->serviceTranslations()->localize()->name?? null,
-            'description' => $this->serviceTranslations()->localize()->description?? null,
+            'name' => $this->translate(App::getlocale())->name?? null,
+            'description' => $this->translate(App::getlocale())->description?? null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         );

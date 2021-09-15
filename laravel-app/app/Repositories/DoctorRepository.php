@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Doctor;
+use App\Http\Filters\DoctorFilter;
 
 class DoctorRepository extends BaseRepository
 {
@@ -22,13 +23,10 @@ class DoctorRepository extends BaseRepository
         $doctorData = $data;
         unset($doctorData['services']);
         unset($doctorData['doctor_week_days']);
-        $this->findBy('id',$doctor->id)->update($doctorData);
+        $this->model->where('id',$doctor->id)->update($doctorData);
         $doctor->services()->sync($data['services']);
-        $this->updateDoctorWeekDays($doctor,$data['doctor_week_days']);
-    }
-
-    public function delete(int $id){
-        $this->findBy('id',$id)->delete();
+        $doctor->doctorWeekDays()->delete();
+        $doctor->doctorWeekDays()->createMany($data['doctor_week_days']);
     }
 
     public function attachDoctorData(Doctor $doctor,Array $data){
@@ -36,26 +34,10 @@ class DoctorRepository extends BaseRepository
         $doctor->doctorWeekDays()->createMany($data['doctor_week_days']);
     }
 
-    public function updateDoctorWeekDays(Doctor $doctor,Array $data){
-        $OldDoctorWeekDaysIds = array_column($doctor->doctorWeekDays->toArray(),'id');
-        $updateWeekDaysIds = array_column($data,'id');
-
-        // delete
-        $deleteWeekDaysIds = array_diff($OldDoctorWeekDaysIds,$updateWeekDaysIds);
-        $doctor->doctorWeekDays()->whereIn('id',$deleteWeekDaysIds)->delete();
-
-        // update
-        $updateDoctorWeekDays = array_filter($data, function ($doctorWeekDay) { return isset($doctorWeekDay['id']); });
-        if(!empty($updateDoctorWeekDays)){
-            foreach ($updateDoctorWeekDays as $key => $doctorWeekDay) {
-                $doctor->doctorWeekDays()->where('id',$doctorWeekDay['id'])->update($doctorWeekDay);
-            }
-        }
-
-        // create
-        $createdData = array_filter($data, function ($doctorWeekDay) {return !isset($doctorWeekDay['id']);});
-        if(!empty($createdData)){
-            $doctor->doctorWeekDays()->createMany($createdData);
-        }
+    public function filterAll(DoctorFilter $filter){
+        return $this->model->filter($filter)
+            ->with(['services' => function ($query){
+                $query->withTranslation();
+            },'reviews','doctorWeekDays.weekDay'])->get();
     }
 }
