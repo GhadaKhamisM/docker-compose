@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App;
 
 class StatusResource extends JsonResource
 {
@@ -16,7 +17,7 @@ class StatusResource extends JsonResource
     {
         return array(
             'id' => $this->id,
-            'name' => $this->statusTranslations()->localize()->name,
+            'name' => $this->translate(App::getlocale())->name,
         );
     }
 }

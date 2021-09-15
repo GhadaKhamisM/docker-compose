@@ -26,11 +26,22 @@ class BookingService
     }
 
     public function create(array $data){
-        $doctor = $this->doctorRepository->findBy('id',$data['doctor_id'])->load('doctorWeekDays.bookings');
+        $doctor = $this->doctorRepository->findBy('id',$data['doctor_id']);
         $doctorWeekDay = $this->doctorWeekDayRepository->findBy('id',$data['doctor_week_day_id']);
-        $availableIntervals = $this->getAvailableTimesInInterval($doctor,$doctorWeekDay,$data['visit_date'])->toArray(); 
-        $selectedInterval = array_filter($availableIntervals,function ($availableInterval) use ($data){ 
-            return $availableInterval->is_available && $availableInterval->start_hour == $data['start_hour']
+
+        $intervaltClosed = $this->checkIntervaltClosed($doctor,$doctorWeekDay,$data['visit_date']);
+        if($intervaltClosed) {
+            abort(Response::HTTP_BAD_REQUEST, Lang::get('messages.doctors.errors.booking'));
+        }
+        
+        $overlapingBookings = $this->bookingRepository->getOverlappingBooking($doctor->id,$data['visit_date'],$data['start_hour'],$data['to_hour']);
+        if($overlapingBookings->count()){
+            abort(Response::HTTP_UNPROCESSABLE_ENTITY,Lang::get('messages.booking.errors.not_available'));    
+        }
+
+        $intervals = $this->getTimeIntervals($doctor,$doctorWeekDay,$data['visit_date']); 
+        $selectedInterval = array_filter($intervals,function ($availableInterval) use ($data){ 
+            return $availableInterval->start_hour == $data['start_hour']
             && $availableInterval->to_hour == $data['to_hour']; });
 
         if(empty($selectedInterval)){
@@ -41,7 +52,7 @@ class BookingService
     }
 
     public function getAll(BookingFilter $filter){
-        return $this->bookingRepository->getAll($filter);
+        return $this->bookingRepository->filterAll($filter);
     }
 
     public function accept(Booking $booking){

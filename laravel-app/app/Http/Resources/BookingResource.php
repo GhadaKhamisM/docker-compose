@@ -22,7 +22,7 @@ class BookingResource extends JsonResource
             'status' =>  new StatusResource($this->status),
             'visit_date' => $this->visit_date,
             'doctor_week_day' => new DoctorWeekDayResource($this->doctorWeekDay),
-            'doctor' => $this->when(config('auth.defaults.guard') == 'patient', new DoctorResource($this->doctor)),
+            'doctor' => $this->when(config('auth.defaults.guard') == 'patient', new CustomDoctorResource($this->doctor)),
             'patient' => $this->when(config('auth.defaults.guard') == 'doctor',new PatientResource($this->patient))
         );
     }

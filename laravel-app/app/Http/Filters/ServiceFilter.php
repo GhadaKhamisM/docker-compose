@@ -6,16 +6,12 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ServiceFilter extends QueryFilter
 {
-    use PaginationFilter;
-
     /**
      * @param string $name
      */
     public function name(string $name)
     {
-        $this->builder->whereHas('serviceTranslations', function($query) use ($name){
-            $query->whereRaw('(name like ?)', array('%'.$name.'%'));
-        });
+        $this->builder->whereTranslationLike('name','%'.$name.'%');
     }
 
     /**
@@ -23,9 +19,7 @@ class ServiceFilter extends QueryFilter
      */
     public function description(string $description)
     {
-        $this->builder->whereHas('serviceTranslations', function($query) use ($description){
-            $query->whereRaw('(description like ?)', array('%'.$description.'%'));
-        });
+        $this->builder->whereTranslationLike('description','%'.$description.'%');
     }
 
     /**
@@ -36,6 +30,17 @@ class ServiceFilter extends QueryFilter
     public function sort(string $value)
     {
         list($field,$order) = explode(',', $value);
-        $this->builder->join('service_translations','service_translations.service_id','services.id')->orderBy($field, $order);
+        $this->builder->orderBy($field, $order);
+    }
+
+    /**
+     * Paginate the services by the given limit and field.
+     *
+     * @param  array  $value
+     */
+    public function pagination(string $value)
+    {
+        list($pageSize,$pageNumber) = explode(',', $value);
+        $this->builder->paginate($pageSize,['*'],'page',$pageNumber);
     }
 }

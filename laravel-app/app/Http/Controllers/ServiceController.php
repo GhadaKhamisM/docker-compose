@@ -41,7 +41,7 @@ class ServiceController extends Controller
     }
 
     public function destroy(Service $service){
-        $this->serviceService->delete($service);
+        $this->serviceService->delete($service->load('doctors'));
         return response()->json(['message' => Lang::get('messages.services.success.delete')] , Response::HTTP_OK);
     }
 }

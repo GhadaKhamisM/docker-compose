@@ -16,9 +16,13 @@ class ReviewRepository extends BaseRepository
     }
 
     public function create(Array $data){
-        $data['patient_id'] = JWTAuth::parseToken()->authenticate()->id;
         $data['date'] = Carbon::now();
         $review = $this->model->create($data);
         return $review;
+    }
+
+    public function filterAll(ReviewFilter $filter){
+        return $this->model->filter($filter)
+            ->with(['patient'])->get();
     }
 }

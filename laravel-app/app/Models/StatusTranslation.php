@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class StatusTranslation extends Model
 {
     use SoftDeletes;
-    use LocalizeTrait;
+
+    public $timestamps = false;
 
     protected $fillable = [
         'name', 'status_id', 'locale',
